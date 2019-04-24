@@ -18,7 +18,7 @@ void deter(Connection c[], Point p[], int numline);
 
 Point *p;
 Connection *c;
-int intersection[100][2];
+float intersection[100][2];
 
 int main()
 {
@@ -70,17 +70,15 @@ deter(c,p,M);
 
 
 void deter(Connection c[], Point p[], int numline){
-    int combi,i,j,k, lines[numline][2][2]; //[linenumber][point][coordinate]
-    float det,s,t,in_x,in_y;
+    int combi,i,j,k=0, lines[numline][2][2]; //[linenumber][point][coordinate]
+    float det,s,t;
     //make lines
     for(i=0;i<numline;i++){     
         lines[i][0][0] = p[c[i].connect[0]-1].coo[0];
         lines[i][0][1] = p[c[i].connect[0]-1].coo[1];
         lines[i][1][0] = p[c[i].connect[1]-1].coo[0];
         lines[i][1][1] = p[c[i].connect[1]-1].coo[1];
-        i++;
     }
-    printf("%d\n",lines[1][0][0]);
     //find number of combination
     combi = fact(numline)/(fact(numline-2)*2);
     //printf("%d\n",combi);
@@ -97,15 +95,15 @@ void deter(Connection c[], Point p[], int numline){
             yp2 = lines[j+1][0][1];
             xq2 = lines[j+1][1][0];
             yq2 = lines[j+1][1][1];
-            printf("%d,%d,%d,%d,%d,%d,%d,%d",xp1,yp1,xq1,yq1,xp2,yp2,xq2,yq2);
+            
             det = (xq1-xp1)*(yp2-yq2)+(xq2-xp2)*(yq1-yp1);
-            printf("%d\n",det);
+            
             ////////////////
             //det[0] = (lines[0][1][0]-lines[0][0][0])*(lines[1][0][1]-lines[1][1][1])+(lines[1][1][0]-lines[1][0][0])*(lines[0][1][1]-lines[0][0][1]);
             if(det < 0){det*=-1;}
 
             if(pow(10,-7)<=det && det<=pow(10,-7)){
-                printf("NA1\n");
+                //printf("NA1\n");
             }
             else{
                 s = ((yp2-yq2)*(xp2-xp1)+(xq2-xp2)*(yp2-yp1))/det;
@@ -115,13 +113,17 @@ void deter(Connection c[], Point p[], int numline){
                     intersection[k][0] = xp2+(xq2-xp2)*t;
                     intersection[k][1] = yp2+(yq2-yp2)*t;
                     k++;
-                }else{printf("NA2\n");}
+                }else{
+                //printf("NA2\n");
+                }
             }
         }
     }
-    
-
-    
+    if(sizeof(intersection) != 0){
+        for(i=0;i<k;i++){
+            printf("%f, %f\n",intersection[i][0],intersection[i][1]);
+        }
+    }else{printf("NA\n");} 
 }
 int fact(int n)
 {
