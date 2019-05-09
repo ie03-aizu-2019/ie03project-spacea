@@ -19,7 +19,6 @@ typedef struct
     float coo[2];
 }Intersection;
 
-int fact(int n);
 void deter(Connection c[], Point p[], int numline);
 void rearrange(Intersection aa[],int k);
 Point *p;
@@ -88,9 +87,7 @@ void deter(Connection c[], Point p[],int numline){
         lines[i][1][0] = p[c[i].connect[1]-1].coo[0];
         lines[i][1][1] = p[c[i].connect[1]-1].coo[1];
     }
-    //find number of combination
-    // combi = fact(numline)/(fact(numline-2)*2);
-    // printf("%d\n",combi);
+
 
     for(i=0;i<numline;i++){
         for(j=i+1;j<numline;j++){
@@ -175,13 +172,4 @@ void rearrange(Intersection aa[],int k){
         }
 
     }
-}
-int fact(int n)
-{
-    int i,f=1;
-    for(i=1;i<=n;i++)
-    {
-        f=f*i;
-    }
-    return f;
 }
