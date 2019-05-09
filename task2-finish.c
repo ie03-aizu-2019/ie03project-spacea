@@ -24,6 +24,7 @@ void rearrange(Intersection aa[],int k);
 Point *p;
 Connection *c;
 Intersection *inter;
+int k;
 
 int main()
 {
@@ -77,7 +78,7 @@ deter(c,p,M);
 
 
 void deter(Connection c[], Point p[],int numline){
-    int combi,i,j,k=0, lines[numline][2][2]; //[linenumber][point][coordinate]
+    int combi,i,j, lines[numline][2][2]; //[linenumber][point][coordinate]
 
     float det,s,t;
     //make lines
