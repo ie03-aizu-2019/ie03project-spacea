@@ -391,33 +391,76 @@ void sort(int low, int high, Intersection aa[]){
     }
 }
 void merge(int low, int mid, int high, Intersection aa[]){
-    int l1, l2, i;
-    Intersection tmp[30];
-    for(l1=low, l2=mid+1, i=low; l1<=mid && l2<=high; i++){
-        if (aa[l1].coo[0] < aa[l2].coo[0])
-        {
-            tmp[i] = aa[l1++];
-        }else if (aa[l1].coo[0] == aa[l2].coo[0])
-        {
-            if (aa[l1].coo[1] < aa[l2].coo[1])
-            {
-                tmp[i] = aa[l1++];
-            }
+    int i, j, k;
+    int n1 = mid -low + 1;
+    int n2 = high - mid;
+    // create temp arrays
+    Intersection L[n1], R[n2];
+    // copy data to temp arrays L[] and R[]
+    for(i=0; i<n1; i++){
+        L[i] = aa[low+i];  
+    }
+    for(j=0; j<n2; j++){
+        R[j] = aa[mid+1+j];
+    }
+    //merge the temp arrays back into aa[]
+    i = 0; //index of first subarray
+    j = 0; //index of second subarray
+    k = low; //index of merged subarray
+    while(i <n1 && j <n2){
+        if(L[i].coo[0] < R[j].coo[0]){
+            aa[k] = L[i];           
+            i++;
+        }else if(L[i].coo[1] < R[j].coo[1]){
+            aa[k] = L[i];
+            i++;
         }else{
-            tmp[i] = aa[l2++];
+            aa[k] = R[j];
+            j++;
         }
-        aa[i].ID = i + 1;
+        k++;
+        
+        
     }
-    while(l1 <= mid){
-        tmp[i++] = aa[l1++];
+    printf("i = %d, j = %d\n",i,j);
+    //copy the remaining elements of L[] if there are any
+    while(i<n1){
+        aa[k] = L[i];     
+        i++;
+        k++;
     }
-    while(l2 <= high){
-        tmp[i++] = aa[l2++];
+    while(j<n2){
+        aa[k] = R[j];        
+        j++;
+        k++;
     }
-    for(i = low; i <= high; i++){
-        aa[i] = tmp[i];
-        aa[i].ID = i+1;
-    }
+//     int l1, l2, i;
+//     Intersection tmp[30];
+//     for(l1=low, l2=mid+1, i=low; l1<=mid && l2<=high; i++){
+//         if (aa[l1].coo[0] < aa[l2].coo[0])
+//         {
+//             tmp[i] = aa[l1++];
+//         }else if (aa[l1].coo[0] == aa[l2].coo[0])
+//         {
+//             if (aa[l1].coo[1] < aa[l2].coo[1])
+//             {
+//                 tmp[i] = aa[l1++];
+//             }
+//         }else{
+//             tmp[i] = aa[l2++];
+//         }
+//         aa[i].ID = i + 1;
+//     }
+//     while(l1 <= mid){
+//         tmp[i++] = aa[l1++];
+//     }
+//     while(l2 <= high){
+//         tmp[i++] = aa[l2++];
+//     }
+//     for(i = low; i <= high; i++){
+//         aa[i] = tmp[i];
+//         aa[i].ID = i+1;
+//     }
 }
 
 void makeEdges()
