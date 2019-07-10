@@ -8,4 +8,6 @@
 
 
 #### 2019-7-10
-1. finish README file
+1. Finish README file
+2. Continue finish task 10
+3. optimization program
