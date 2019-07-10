@@ -87,7 +87,8 @@ void sortAlign(Align *, int, int);
 
 void makeGraph(Point p[], Intersection inter[], int k, int n);
 //--------------------------------//
-
+//task7--------------------------//
+void newroad(Connection c[], Point p[], Point new_p[],int num_new_p, int numline);
 //task3,4------------------------//
 void resetNodeStatus();
 void searchRoute(char *, char *);
@@ -110,7 +111,7 @@ void searchK_route(char *, char *, int);
 //task8----------------------------//
 void searchHighways();
 //---------------------------------//
-Point *p;
+Point *p, *new_p;
 Connection *c;
 Intersection *inter;
 Node *nodes;
@@ -139,7 +140,7 @@ int main()
     int from_index, to_index;
 
 	//interface: need to 1.add function to case, 2.add remind for inputdata, 3.add input part to each functions.
-	while(1){
+while(1){
 	printf("What kind of function do you want to use?\n");
 	printf("Input the number of the function.\n");
 	printf("1------------------------------------shortest path\n");
@@ -151,66 +152,164 @@ int main()
 //	printf("The first line contains the number of locations N, the number of roads M, the number of additional locations P, and the number of path queries Q separated by a space.\n");
 	switch(option){
 		case 1:
-		//add function here		
+            //Segments *segments;
+            scanf("%d %d %d %d", &N, &M, &P, &Q);
+            //make array
+            p = (Point *)malloc(sizeof(Point) * N);
+            c = (Connection *)malloc(sizeof(Connection) * M);
+            inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+            // float segments[M][30][2];
+            //segments = (Segments *)malloc(sizeof(Segments) * M);
+
+            //input data
+            for (i = 0; i < N; i++)
+            {
+                scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
+                p[i].identifer = i + 1;
+            }
+
+            for (i = 0; i < M; i++)
+            {
+                scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+            }
+            //calc intersection
+            deter(c, p, M);
+
+            //make graph
+            makeEdges();
+            makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
+
+            //search route
+            for (i = 0; i < Q; i++)
+            {
+                scanf("%s %s %d", str_from, str_to, &k_short);
+                searchK_route(str_from, str_to, k_short);
+            }	
+            free(p);
+            free(c);
+            free(inter);
+            free(nodes);
+            free(edges);
+            printf("end of the program");
 			break;
 		case 2:
-		//add function here	
+            //Segments *segments;
+            scanf("%d %d %d %d", &N, &M, &P, &Q);
+            // //make array
+            p = (Point *)malloc(sizeof(Point) * N);
+            c = (Connection *)malloc(sizeof(Connection) * M);
+            inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+            //input data
+            for (i = 0; i < N; i++)
+            {
+                scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
+                p[i].identifer = i + 1;
+            }
+
+            for (i = 0; i < M; i++)
+            {
+                scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+            }
+            for (i = 0; i < P; i++)
+            {
+                scanf("%d %d", &new_p[i].coo[0], &new_p[i].coo[1]);
+            }
+            newroad(c, p,new_p, P, M);
+            free(p);
+            free(c);
+            free(inter);
+            free(nodes);
+            free(edges);
+            printf("end of the program");
 			break;		
 		case 3:
-		//add function here	
-			break;
-			
+            //Segments *segments;
+            scanf("%d %d %d %d", &N, &M, &P, &Q);
+
+            //make array
+            p = (Point *)malloc(sizeof(Point) * N);
+            c = (Connection *)malloc(sizeof(Connection) * M);
+            inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+            // float segments[M][30][2];
+            //segments = (Segments *)malloc(sizeof(Segments) * M);
+
+            //input data
+            for (i = 0; i < N; i++)
+            {
+                scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
+                p[i].identifer = i + 1;
+            }
+
+            for (i = 0; i < M; i++)
+            {
+                scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+            }
+            //calc intersection
+            deter(c, p, M);
+
+            //make graph
+            makeEdges();
+            makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
+            //search Highway
+            searchHighways();
+            free(p);
+            free(c);
+            free(inter);
+            free(nodes);
+            free(edges);
+            printf("end of the program");
+			break;			
 		case 0:
 			return 0;
-		}		
-	}
+    }
+}
 
 
     //Segments *segments;
-    scanf("%d %d %d %d", &N, &M, &P, &Q);
+    // scanf("%d %d %d %d", &N, &M, &P, &Q);
 
-    //make array
-    p = (Point *)malloc(sizeof(Point) * N);
-    c = (Connection *)malloc(sizeof(Connection) * M);
-    inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
-    // float segments[M][30][2];
-    //segments = (Segments *)malloc(sizeof(Segments) * M);
+    // //make array
+    // p = (Point *)malloc(sizeof(Point) * N);
+    // c = (Connection *)malloc(sizeof(Connection) * M);
+    // inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+    // // float segments[M][30][2];
+    // //segments = (Segments *)malloc(sizeof(Segments) * M);
 
-    //input data
-    for (i = 0; i < N; i++)
-    {
-        scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
-        p[i].identifer = i + 1;
-    }
+    // //input data
+    // for (i = 0; i < N; i++)
+    // {
+    //     scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
+    //     p[i].identifer = i + 1;
+    // }
 
-    for (i = 0; i < M; i++)
-    {
-        scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
-    }
-    //calc intersection
-    deter(c, p, M);
+    // for (i = 0; i < M; i++)
+    // {
+    //     scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+    // }
+    // //calc intersection
+    // deter(c, p, M);
 
-    //make graph
-    makeEdges();
-    makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
+    // //make graph
+    // makeEdges();
+    // makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
 
-    //search route
-    for (i = 0; i < Q; i++)
-    {
-        scanf("%s %s %d", str_from, str_to, &k_short);
-        searchK_route(str_from, str_to, k_short);
-    }
+    // //search route
+    // for (i = 0; i < Q; i++)
+    // {
+    //     scanf("%s %s %d", str_from, str_to, &k_short);
+    //     searchK_route(str_from, str_to, k_short);
+    // }
 
-    //search Highway
-    //searchHighways();
+    // //search Highway
+    // //searchHighways();
 
-    //release mmemories
-    free(p);
-    free(c);
-    free(inter);
-    free(nodes);
-    free(edges);
-    printf("end of the program");
+    // //release mmemories
+    // free(p);
+    // free(c);
+    // free(inter);
+    // free(nodes);
+    // free(edges);
+    // printf("end of the program");
 //    return 0;
 }
 
@@ -1183,4 +1282,81 @@ void searchHighways()
     }
 
     free(qr);
+}
+void newroad(Connection c[], Point p[], Point new_p[],int num_new_p, int numline)
+{
+    int combi, i, j, m, n;
+    int ***lines; //lines[numline][2][2]; //[linenumber][point][coordinate]
+    int n_p = 10; //max number of point on a segment
+    //float lines1[numline][n_p][2]
+    float **dist; //float dist[numline][n_p];
+    float dist1, dist2, tmpd = 0,tmpd1, tmpd2, tmpx=0, tmpy=0;
+    float det, s, t;
+
+
+    for (i = 0; i < num_new_p; i++)
+    {
+        int new_x, new_y;
+        tmpd = 0;
+        tmpx = 0;
+        tmpy = 0;
+        new_x = new_p[i].coo[0];
+        new_y = new_p[i].coo[1];
+        for (j = 0; j < numline; j++)
+        {
+            //easy to see
+            int xp1, yp1, xq1, yq1;
+            xp1 = p[c[i].connect[0] - 1].coo[0];
+            yp1 = p[c[i].connect[0] - 1].coo[1];
+            xq1 = p[c[i].connect[1] - 1].coo[0];
+            yq1 = p[c[i].connect[1] - 1].coo[1];
+
+            t = -(((xp1-new_x)*(xq1-xp1)+(yp1-new_y)*(yq1-yp1))/(pow(xq1-xp1,2)+pow(yq1-yp1,2)));
+            if (t >= 0 && t <= 1)
+            {
+                dist1 = abs((xq1-xp1)*(yp1-new_y)-(yq1-yp1)*(xp1-new_x))/sqrt(pow(xq1-xp1,2)+pow(yq1-yp1,2));
+                if(tmpd == 0 ){
+                    tmpd = dist1;
+                    tmpx = xp1+(xq1-xp1)*t;
+                    tmpy = yp1+(yq1-yp1)*t;
+                    
+                }else if(tmpd > dist1){
+                    tmpd = dist1;
+                    tmpx =xp1+(xq1-xp1)*t;
+                    tmpy = yp1+(yq1-yp1)*t;
+                    
+                }
+            }else{
+                dist1 = sqrt(pow(xp1-new_x,2)+pow(yp1-new_y,2));
+                dist2 = sqrt(pow(xq1-new_x,2)+pow(yq1-new_y,2));
+                if(tmpd == 0){
+                    if(dist1 < dist2){
+                        tmpd = dist1;
+                        tmpx = xp1;
+                        tmpy = yp1;
+                        
+                    }else{
+                        tmpd = dist2;
+                        tmpx = xq1;
+                        tmpy = yq1;
+                        
+                    }
+                }
+                else if(tmpd > dist1 || tmpd > dist2){
+                    if(dist1 < dist2){
+                        tmpd = dist1;
+                        tmpx = xp1;
+                        tmpy = yp1;
+                        
+                    }else{
+                        tmpd = dist2;
+                        tmpx = xq1;
+                        tmpy = yq1;
+                        
+                    }
+                }
+            }
+        }
+        printf("%f, %f, dist = %f\n",tmpx,tmpy,tmpd);
+    }
 }
