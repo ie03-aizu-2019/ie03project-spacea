@@ -2,6 +2,11 @@
 ## Welcome to spacea group
 
 ### How to use
+We have three functions:
+  1. Shortest path
+  2. optimal road construction to the new points
+  3. detecttion
+
 
 ------
 ### upgrade
