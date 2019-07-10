@@ -6,8 +6,9 @@ We have three functions:
   1. Shortest path
   2. optimal road construction to the new points
   3. detecttion
-Use their respective numbers to select them ("q" is exit)
-
+  Use their respective numbers to select them ("q" is exit)
+  
+then
 
 ------
 ### upgrade
