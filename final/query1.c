@@ -149,6 +149,22 @@ while(1){
 	printf("0--------------------------------------------quit.\n");
     printf("Option selection:");
 	scanf("%d",&option);
+    printf("Input format:\n\n");
+    printf("----------------------\n");
+    printf("N M P Q\n");
+    printf("x_1 y_1\nx_2 y_2\n:\nx_n y_n\n");
+    printf("b_1 e_1\nb_2 e_2\n:\nb_m e_m\n");
+    printf("new_x_1 new_y_1\nnew_x_2 new_y_2\n:\nnew_x_p new_y_p\n");
+    printf("s_1 d_1 k_1\ns_2 d_2 k_2\n:\ns_q d_q k_q\n");
+    printf("-----------------------\n\n");
+    printf("N is number of locations.\n");
+    printf("M is number of roads.\n");
+    printf("P is number of new locations.\n");
+    printf("Q is number of path queries.\n");
+    printf("From x_1 y_1 to x_n y_n are coordinates of locations\n");
+    printf("From b_1 e_1 to b_m e_m are start and end location IDs of line segments\n");
+    printf("From new_x_1 new_y_1 to new_x_p new_y_p are coordinates of new locations\n");
+    printf("From s_1 d_1 k_1 to s_q d_q k_q are start and end location IDs and number of k-th shortest paths for query.\n\n");
 //	printf("please input you data first\n");
 //	printf("The first line contains the number of locations N, the number of roads M, the number of additional locations P, and the number of path queries Q separated by a space.\n");
 	switch(option){
