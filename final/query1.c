@@ -147,12 +147,15 @@ while(1){
 	printf("2-----optimal road construction to the new points.\n");
 	printf("3-------------------------------highway detection.\n");
 	printf("0--------------------------------------------quit.\n");
+    printf("Option selection:");
 	scanf("%d",&option);
 //	printf("please input you data first\n");
 //	printf("The first line contains the number of locations N, the number of roads M, the number of additional locations P, and the number of path queries Q separated by a space.\n");
 	switch(option){
 		case 1:
+            printf("Finding shortest paths.\n");
             //Segments *segments;
+            printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
             scanf("%d %d %d %d", &N, &M, &P, &Q);
             //make array
             p = (Point *)malloc(sizeof(Point) * N);
@@ -164,12 +167,14 @@ while(1){
             //input data
             for (i = 0; i < N; i++)
             {
+                printf("Coordinate number %d: ",i+1);
                 scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
                 p[i].identifer = i + 1;
             }
 
             for (i = 0; i < M; i++)
             {
+                printf("Line number %d: ",i+1);
                 scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
             }
             //calc intersection
@@ -182,6 +187,7 @@ while(1){
             //search route
             for (i = 0; i < Q; i++)
             {
+                printf("[start point] [destination] [number of route]: ");
                 scanf("%s %s %d", str_from, str_to, &k_short);
                 searchK_route(str_from, str_to, k_short);
             }	
@@ -190,40 +196,49 @@ while(1){
             free(inter);
             free(nodes);
             free(edges);
-            printf("end of the program");
+            printf("end of the program\n\n");
 			break;
 		case 2:
+            printf("Finding point to construct new road.\n");
             //Segments *segments;
+            printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
             scanf("%d %d %d %d", &N, &M, &P, &Q);
             // //make array
             p = (Point *)malloc(sizeof(Point) * N);
             c = (Connection *)malloc(sizeof(Connection) * M);
             inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+            new_p = (Point *)malloc(sizeof(Point) * P);
             //input data
             for (i = 0; i < N; i++)
             {
+                printf("Coordinate number %d: ",i+1);
                 scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
                 p[i].identifer = i + 1;
             }
 
             for (i = 0; i < M; i++)
             {
+                printf("Line number %d: ",i+1);
                 scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
             }
             for (i = 0; i < P; i++)
             {
+                printf("New coordinate number %d: ",i+1);
                 scanf("%d %d", &new_p[i].coo[0], &new_p[i].coo[1]);
             }
             newroad(c, p,new_p, P, M);
             free(p);
+            free(new_p);
             free(c);
             free(inter);
             free(nodes);
             free(edges);
-            printf("end of the program");
+            printf("end of the program\n\n");
 			break;		
 		case 3:
+            printf("Detecting Highways.\n");
             //Segments *segments;
+            printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
             scanf("%d %d %d %d", &N, &M, &P, &Q);
 
             //make array
@@ -236,12 +251,14 @@ while(1){
             //input data
             for (i = 0; i < N; i++)
             {
+                printf("Coordinate number %d: ",i+1);
                 scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
                 p[i].identifer = i + 1;
             }
 
             for (i = 0; i < M; i++)
             {
+                printf("Line number %d: ",i+1);
                 scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
             }
             //calc intersection
@@ -257,7 +274,7 @@ while(1){
             free(inter);
             free(nodes);
             free(edges);
-            printf("end of the program");
+            printf("end of the program\n\n");
 			break;			
 		case 0:
 			return 0;
@@ -464,7 +481,7 @@ void deter(Connection c[], Point p[], int numline)
     printf("+++++++++++++++++++++++++++++++++++\n");
 */
     intersectionnumber = k;
-    free(lines);
+    // free(lines);
 }
 void rearrange(Intersection aa[], int k)
 {
