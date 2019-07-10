@@ -1,8 +1,20 @@
 # IE03 Integarted Exercise for software I  
-## Welcome to spacea group  
+## Welcome to spacea group
+
 ### How to use
+
+
+
+
+
 
 ### upgrade
 
-#### 2019-7-10
 
+
+
+
+
+
+#### 2019-7-10
+1. finish README file
