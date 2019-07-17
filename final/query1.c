@@ -175,7 +175,7 @@ while(1){
 		case 1:
             printf("Finding shortest paths.\n");
             //Segments *segments;
-            printf("please input [locations] [roads] [additional locations] [path queries]\n");
+            printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
             scanf("%d %d %d %d", &N, &M, &P, &Q);
             //make array
             p = (Point *)malloc(sizeof(Point) * N);
@@ -205,6 +205,7 @@ while(1){
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
 
             //search route
+            printf("please input[start point] [end point] [how many way]\n") ;
             for (i = 0; i < Q; i++)
             {
                 // printf("[start point] [destination] [number of route]: ");
