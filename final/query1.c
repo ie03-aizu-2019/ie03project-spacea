@@ -135,12 +135,28 @@ int main()
 {
     int i, j; //loop variable
 
+    //////interface
+    int firsttime = 0;
+    char again[4];
+    int intype; //for data input type (by hand or file)
+    FILE *fp;
+    char filename[100],datac;
+    int datan; //read from file to get number of characters input
+    char *datas; //data in string format for file input
+    ///////
+
     //task4
     char str_from[10], str_to[10];
     int from_index, to_index;
 
 	//interface: need to 1.add function to case, 2.add remind for inputdata, 3.add input part to each functions.
 while(1){
+    if(firsttime != 0){
+        printf("Do you want to do it again?(yes/no)");
+        scanf("%s",&again);
+        if(again == "no")exit(1);
+    }
+    firsttime = 1;
 	printf("What kind of function do you want to use?\n");
 	printf("Input the number of the function.\n");
 	printf("1------------------------------------shortest path\n");
@@ -175,27 +191,58 @@ while(1){
 		case 1:
             printf("Finding shortest paths.\n");
             //Segments *segments;
-            printf("Input data:\n");
-            scanf("%d %d %d %d", &N, &M, &P, &Q);
-            //make array
-            p = (Point *)malloc(sizeof(Point) * N);
-            c = (Connection *)malloc(sizeof(Connection) * M);
-            inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
-            // float segments[M][30][2];
-            //segments = (Segments *)malloc(sizeof(Segments) * M);
+            printf("Input data by hand or file?\n");
+            printf("1. File input\n");
+            printf("2. Hand input\n:");
+            scanf("%d",&intype);
+            if(intype == 1){
+                printf("Enter the file name:");
+                scanf("%100s",filename);
+                printf("\n");
+                fp = fopen(filename,"r");
+                if(fp == NULL){
+                    printf("error: file not found.\n");
+                    exit(1);
+                }
+                fscanf(fp,"%d%d%d%d",&N,&M,&P,&Q);
+                // printf("%d %d %d %d",N,M,P,Q);
 
-            //input data
-            for (i = 0; i < N; i++)
-            {
-                // printf("Coordinate number %d: ",i+1);
-                scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
-                p[i].identifer = i + 1;
-            }
+                //make array
+                p = (Point *)malloc(sizeof(Point) * N);
+                c = (Connection *)malloc(sizeof(Connection) * M);
+                inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+                for (i = 0; i < N; i++)
+                {
+                    fscanf(fp,"%d%d", &p[i].coo[0],&p[i].coo[1]);
+                    p[i].identifer = i + 1;
+                }
+                for (i = 0; i < M; i++)
+                {
+                    // printf("Line number %d: ",i+1);
+                    fscanf(fp,"%d%d", &c[i].connect[0], &c[i].connect[1]);
+                }
+            }else if(intype == 2){
+                scanf("%d %d %d %d", &N, &M, &P, &Q);
+                //make array
+                p = (Point *)malloc(sizeof(Point) * N);
+                c = (Connection *)malloc(sizeof(Connection) * M);
+                inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+                // float segments[M][30][2];
+                //segments = (Segments *)malloc(sizeof(Segments) * M);
 
-            for (i = 0; i < M; i++)
-            {
-                // printf("Line number %d: ",i+1);
-                scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+                //input data
+                for (i = 0; i < N; i++)
+                {
+                    // printf("Coordinate number %d: ",i+1);
+                    scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
+                    p[i].identifer = i + 1;
+                }
+
+                for (i = 0; i < M; i++)
+                {
+                    // printf("Line number %d: ",i+1);
+                    scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+                }
             }
             //calc intersection
             deter(c, p, M);
@@ -205,12 +252,21 @@ while(1){
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
 
             //search route
+            if(intype == 1){
+                for (i = 0; i < Q; i++)
+                {
+                    // printf("[start point] [destination] [number of route]: ");
+                    fscanf(fp,"%s%s%d", str_from, str_to, &k_short);
+                    searchK_route(str_from, str_to, k_short);
+                }                
+            }else if(intype == 2){
             for (i = 0; i < Q; i++)
-            {
-                // printf("[start point] [destination] [number of route]: ");
-                scanf("%s %s %d", str_from, str_to, &k_short);
-                searchK_route(str_from, str_to, k_short);
-            }	
+                {
+                    // printf("[start point] [destination] [number of route]: ");
+                    scanf("%s %s %d", str_from, str_to, &k_short);
+                    searchK_route(str_from, str_to, k_short);
+                }	
+            }
             free(p);
             free(c);
             free(inter);
@@ -220,31 +276,70 @@ while(1){
 			break;
 		case 2:
             printf("Finding point to construct new road.\n");
+            printf("Input data by hand or file?\n");
+            printf("1. File input\n");
+            printf("2. Hand input\n:");
+            scanf("%d",&intype);
             //Segments *segments;
-            printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
-            scanf("%d %d %d %d", &N, &M, &P, &Q);
-            // //make array
-            p = (Point *)malloc(sizeof(Point) * N);
-            c = (Connection *)malloc(sizeof(Connection) * M);
-            inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
-            new_p = (Point *)malloc(sizeof(Point) * P);
-            //input data
-            for (i = 0; i < N; i++)
-            {
-                printf("Coordinate number %d: ",i+1);
-                scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
-                p[i].identifer = i + 1;
-            }
+            // printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
+            if(intype == 1){
+                printf("Enter the file name:");
+                scanf("%100s",filename);
+                printf("\n");
+                fp = fopen(filename,"r");
+                if(fp == NULL){
+                    printf("error: file not found.\n");
+                    exit(1);
+                }
+                fscanf(fp,"%d%d%d%d",&N,&M,&P,&Q);
+                // //make array
+                p = (Point *)malloc(sizeof(Point) * N);
+                c = (Connection *)malloc(sizeof(Connection) * M);
+                inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+                new_p = (Point *)malloc(sizeof(Point) * P);
+                //input data
+                for (i = 0; i < N; i++)
+                {
+                    // printf("Coordinate number %d: ",i+1);
+                    fscanf(fp,"%d%d", &p[i].coo[0], &p[i].coo[1]);
+                    p[i].identifer = i + 1;
+                }
 
-            for (i = 0; i < M; i++)
-            {
-                printf("Line number %d: ",i+1);
-                scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
-            }
-            for (i = 0; i < P; i++)
-            {
-                printf("New coordinate number %d: ",i+1);
-                scanf("%d %d", &new_p[i].coo[0], &new_p[i].coo[1]);
+                for (i = 0; i < M; i++)
+                {
+                    // printf("Line number %d: ",i+1);
+                    fscanf(fp,"%d%d", &c[i].connect[0], &c[i].connect[1]);
+                }
+                for (i = 0; i < P; i++)
+                {
+                    // printf("New coordinate number %d: ",i+1);
+                    fscanf(fp,"%d%d", &new_p[i].coo[0], &new_p[i].coo[1]);
+                }
+            }else if(intype == 2){
+                scanf("%d %d %d %d", &N, &M, &P, &Q);
+                // //make array
+                p = (Point *)malloc(sizeof(Point) * N);
+                c = (Connection *)malloc(sizeof(Connection) * M);
+                inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+                new_p = (Point *)malloc(sizeof(Point) * P);
+                //input data
+                for (i = 0; i < N; i++)
+                {
+                    printf("Coordinate number %d: ",i+1);
+                    scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
+                    p[i].identifer = i + 1;
+                }
+
+                for (i = 0; i < M; i++)
+                {
+                    printf("Line number %d: ",i+1);
+                    scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+                }
+                for (i = 0; i < P; i++)
+                {
+                    printf("New coordinate number %d: ",i+1);
+                    scanf("%d %d", &new_p[i].coo[0], &new_p[i].coo[1]);
+                }
             }
             newroad(c, p,new_p, P, M);
             free(p);
@@ -257,29 +352,63 @@ while(1){
 			break;		
 		case 3:
             printf("Detecting Highways.\n");
+            printf("Input data by hand or file?\n");
+            printf("1. File input\n");
+            printf("2. Hand input\n:");
+            scanf("%d",&intype);
             //Segments *segments;
-            printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
-            scanf("%d %d %d %d", &N, &M, &P, &Q);
+            // printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
+            if(intype == 1){
+                printf("Enter the file name:");
+                scanf("%100s",filename);
+                printf("\n");
+                fp = fopen(filename,"r");
+                if(fp == NULL){
+                    printf("error: file not found.\n");
+                    exit(1);
+                }
+                fscanf(fp,"%d%d%d%d",&N,&M,&P,&Q);
+                //make array
+                p = (Point *)malloc(sizeof(Point) * N);
+                c = (Connection *)malloc(sizeof(Connection) * M);
+                inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
 
-            //make array
-            p = (Point *)malloc(sizeof(Point) * N);
-            c = (Connection *)malloc(sizeof(Connection) * M);
-            inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
-            // float segments[M][30][2];
-            //segments = (Segments *)malloc(sizeof(Segments) * M);
+                //input data
+                for (i = 0; i < N; i++)
+                {
+                    // printf("Coordinate number %d: ",i+1);
+                    fscanf(fp,"%d%d", &p[i].coo[0], &p[i].coo[1]);
+                    p[i].identifer = i + 1;
+                }
 
-            //input data
-            for (i = 0; i < N; i++)
-            {
-                printf("Coordinate number %d: ",i+1);
-                scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
-                p[i].identifer = i + 1;
-            }
+                for (i = 0; i < M; i++)
+                {
+                    // printf("Line number %d: ",i+1);
+                    fscanf(fp,"%d%d", &c[i].connect[0], &c[i].connect[1]);
+                }
+            }else if(intype == 2){
+                scanf("%d %d %d %d", &N, &M, &P, &Q);
 
-            for (i = 0; i < M; i++)
-            {
-                printf("Line number %d: ",i+1);
-                scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+                //make array
+                p = (Point *)malloc(sizeof(Point) * N);
+                c = (Connection *)malloc(sizeof(Connection) * M);
+                inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+                // float segments[M][30][2];
+                //segments = (Segments *)malloc(sizeof(Segments) * M);
+
+                //input data
+                for (i = 0; i < N; i++)
+                {
+                    printf("Coordinate number %d: ",i+1);
+                    scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
+                    p[i].identifer = i + 1;
+                }
+
+                for (i = 0; i < M; i++)
+                {
+                    printf("Line number %d: ",i+1);
+                    scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
+                }
             }
             //calc intersection
             deter(c, p, M);
@@ -473,14 +602,14 @@ void deter(Connection c[], Point p[], int numline)
         //printf("num of intersection %d\n", k);
         // rearrange(inter, k);
         sort(0,k-1,inter);
-        // printf("intersection\n");
-        // for (i = 0; i < k; i++)
-        // {
-        //     printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
-        //     //printf("line %d and %d \n", inter[i].crossline[0], inter[i].crossline[1]);
-        //     //printf("line1 point %d and %d ", c[inter[i].crosslile[0]].connect[0], c[inter[i].crosslile[0]].connect[1]);
-        //     //printf("line2 point %d and %d\n", c[inter[i].crosslile[1]].connect[0], c[inter[i].crosslile[1]].connect[1]);
-        // }
+        printf("intersection\n");
+        for (i = 0; i < k; i++)
+        {
+            printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
+            //printf("line %d and %d \n", inter[i].crossline[0], inter[i].crossline[1]);
+            //printf("line1 point %d and %d ", c[inter[i].crosslile[0]].connect[0], c[inter[i].crosslile[0]].connect[1]);
+            //printf("line2 point %d and %d\n", c[inter[i].crosslile[1]].connect[0], c[inter[i].crosslile[1]].connect[1]);
+        }
         // printf("\n");
     }
     else
@@ -1277,6 +1406,8 @@ void searchK_route(char *from, char *to, int k_num)
             printf("\n");
             tmpdist = k_route[i].dist;
         }
+        free(qr);
+        free(k_route);
     }
     else
     {
@@ -1284,8 +1415,7 @@ void searchK_route(char *from, char *to, int k_num)
     }
     printf("\n");
 
-    free(qr);
-    free(k_route);
+    
 
     return;
 }
