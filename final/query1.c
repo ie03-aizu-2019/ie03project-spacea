@@ -175,7 +175,7 @@ while(1){
 		case 1:
             printf("Finding shortest paths.\n");
             //Segments *segments;
-            printf("Input data:\n");
+            printf("please input [locations] [roads] [additional locations] [path queries]\n");
             scanf("%d %d %d %d", &N, &M, &P, &Q);
             //make array
             p = (Point *)malloc(sizeof(Point) * N);
@@ -183,15 +183,15 @@ while(1){
             inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
             // float segments[M][30][2];
             //segments = (Segments *)malloc(sizeof(Segments) * M);
-
             //input data
+			printf("please input coordinate\n") ;
             for (i = 0; i < N; i++)
             {
                 // printf("Coordinate number %d: ",i+1);
                 scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
                 p[i].identifer = i + 1;
             }
-
+			printf("please input line\n");
             for (i = 0; i < M; i++)
             {
                 // printf("Line number %d: ",i+1);
