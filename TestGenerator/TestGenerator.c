@@ -4,6 +4,17 @@
 #include <math.h>
 #include <time.h>
 
+#define TRUE 1
+#define FALSE 0
+#define HASH_SIZE 4096
+
+typedef struct List
+{
+    struct List *next;
+    int x;
+    int y;
+} List;
+
 typedef struct
 {
     int identifer;
@@ -16,6 +27,13 @@ typedef struct
 } Connection;
 
 void deter(Connection c[], Point p[], int numline);
+int combination(int, int);
+
+/* hash */
+int Hash(int, int);
+int searchVal(List **, int, int);
+void freeHashTable(List **);
+/*      */
 
 Point *p;
 Connection *c;
@@ -26,7 +44,11 @@ int main()
     FILE *f;
     char filename[100], str[10];
     int MAX_COO, N, M, P, Q;
-    int i, X, Y;
+
+    int X, Y, temp, temp2, i, hashval;
+    List **hashtable, **hashtable2;
+    List *lp, *lq;
+    clock_t start, end, temp_t, temp2_t;
 
     printf("Write file name\n");
     scanf("%s", filename);
@@ -40,21 +62,94 @@ int main()
         exit(1);
     }
 
-    printf("Define the maximum coordinate x&y\n");
-    scanf("%d", &MAX_COO);
+    while (1)
+    {
+        printf("Define the maximum coordinate x&y(<= 1000000)\n");
+        scanf("%d", &MAX_COO);
+        if (MAX_COO <= 1000000)
+        {
+            break;
+        }
+        printf("The number is too big\n");
+        printf("Please write smaller number\n");
+    }
 
-    printf("Write number of N\n");
-    scanf("%d", &N);
+    MAX_COO++;
+
+    if (MAX_COO <= 447)
+    {
+        temp = MAX_COO * MAX_COO;
+    }
+    else
+    {
+        temp = 2 * 100000;
+    }
+
+    while (1)
+    {
+        printf("Write number of N (N <= %d)\n", temp);
+        scanf("%d", &N);
+        if (N <= temp)
+        {
+            break;
+        }
+        printf("The number of N is too big\n");
+        printf("Please write smaller number\n");
+    }
     fprintf(f, "%d ", N);
-    printf("Write number of M\n");
-    scanf("%d", &M);
+
+    if (N <= 447)
+    {
+        temp2 = combination(N, 2);
+    }
+    else
+    {
+        temp2 = 100000;
+    }
+
+    while (1)
+    {
+        printf("Write number of M (M <= %d)\n", temp2);
+        scanf("%d", &M);
+        if (M <= temp2)
+        {
+            break;
+        }
+        printf("The number of N is too big\n");
+        printf("Please write smaller number\n");
+    }
     fprintf(f, "%d ", M);
-    printf("Write number of P\n");
-    scanf("%d", &P);
+
+    if (N <= 447)
+    {
+        temp2 = temp - N;
+    }
+    else
+    {
+        temp2 = 100;
+    }
+    if (temp2 < 0)
+    {
+        temp2 = 0;
+    }
+    while (1)
+    {
+        printf("Write number of P (P <= %d)\n", temp2);
+        scanf("%d", &P);
+        if (P <= temp2)
+        {
+            break;
+        }
+        printf("The number is too big\n");
+        printf("Please write smaller number\n");
+    }
+
     fprintf(f, "%d ", P);
     printf("Write number of Q\n");
     scanf("%d", &Q);
     fprintf(f, "%d\n", Q);
+
+    start = clock();
 
     //make array
     p = (Point *)malloc(sizeof(Point) * N);
@@ -64,81 +159,278 @@ int main()
     srand((unsigned int)time(NULL));
 
     printf("Randomizing coordinate X and Y ...\n");
-    for (i = 0; i < N; i++)
+
+    hashtable = (List **)malloc(sizeof(List *) * HASH_SIZE);
+    for (i = 0; i < HASH_SIZE; i++)
+    {
+        hashtable[i] = NULL;
+    }
+
+    i = 0;
+    while (i < N)
     {
         X = rand() % MAX_COO;
-        fprintf(f, "%d ", X);
-        p[i].coo[0] = X;
-
         Y = rand() % MAX_COO;
 
-        while (Y == X)
+        if (searchVal(hashtable, X, Y) == FALSE)
         {
-            Y = rand() % MAX_COO;
-        }
-        fprintf(f, "%d\n", Y);
-        p[i].coo[1] = Y;
+            fprintf(f, "%d ", X);
+            fprintf(f, "%d\n", Y);
 
-        p[i].identifer = i + 1;
+            p[i].coo[0] = X;
+            p[i].coo[1] = Y;
+            p[i].identifer = i + 1;
+
+            hashval = Hash(X, Y);
+
+            lp = (List *)malloc(sizeof(List));
+            lp->x = X;
+            lp->y = Y;
+            lp->next = NULL;
+
+            if (hashtable[hashval] == NULL)
+            {
+                hashtable[hashval] = lp;
+            }
+            else
+            {
+                lq = hashtable[hashval];
+                while (lq->next != NULL)
+                {
+                    lq = lq->next;
+                }
+                lq->next = lp;
+                lp->next = NULL;
+            }
+
+            i++;
+        }
+        else
+        {
+            continue;
+        }
+    }
+
+    if (P == 0)
+    {
+        freeHashTable(hashtable);
     }
     printf("done\n");
 
     printf("Randomizing connection A and B ...\n");
-    for (i = 0; i < M; i++)
+
+    hashtable2 = (List **)malloc(sizeof(List *) * HASH_SIZE);
+    for (i = 0; i < HASH_SIZE; i++)
+    {
+        hashtable2[i] = NULL;
+    }
+
+    i = 0;
+    while (i < M)
     {
         X = 1 + rand() % N;
-        fprintf(f, "%d ", X);
-        c[i].connect[0] = X;
-
-        Y = 1 + rand() % N;
-        while (Y == X)
+        for (Y = 1 + rand() % N; Y == X; Y = 1 + rand() % N)
         {
-            Y = 1 + rand() % N;
         }
-        fprintf(f, "%d\n", Y);
-        c[i].connect[1] = Y;
-    }
-    printf("done\n");
 
+        if (X > Y)
+        {
+            temp = X;
+            X = Y;
+            Y = temp;
+        }
+
+        if (searchVal(hashtable2, X, Y) == FALSE)
+        {
+            fprintf(f, "%d ", X);
+            fprintf(f, "%d\n", Y);
+            c[i].connect[0] = X;
+            c[i].connect[1] = Y;
+
+            hashval = Hash(X, Y);
+            lp = (List *)malloc(sizeof(List));
+            lp->x = X;
+            lp->y = Y;
+            lp->next = NULL;
+
+            if (hashtable2[hashval] == NULL)
+            {
+                hashtable2[hashval] = lp;
+            }
+            else
+            {
+                lq = hashtable2[hashval];
+                while (lq->next != NULL)
+                {
+                    lq = lq->next;
+                }
+                lq->next = lp;
+                lp->next = NULL;
+            }
+
+            i++;
+        }
+        else
+        {
+            continue;
+        }
+    }
+    freeHashTable(hashtable2);
+
+    printf("done\n");
+    printf("Checking number of intersection\n");
     deter(c, p, M);
     printf("Number of intersection is %d\n", intersectionnumber);
-
-    printf("Making request of shortest route\n");
-    for (i = 0; i < Q; i++)
+    if (P != 0)
     {
+        printf("Making request of new location\n");
+        i = 0;
+        while (i < P)
+        {
+            X = rand() % MAX_COO;
+            Y = rand() % MAX_COO;
 
-        Y = rand() % 2;
+            if (searchVal(hashtable, X, Y) == FALSE)
+            {
+                fprintf(f, "%d ", X);
+                fprintf(f, "%d\n", Y);
 
-        if (Y == 0)
-        {
-            X = 1 + rand() % intersectionnumber;
-            sprintf(str, "%d", X);
-            fprintf(f, "C%s ", str);
-        }
-        else
-        {
-            X = 1 + rand() % N;
-            sprintf(str, "%d", X);
-            fprintf(f, "%s ", str);
-        }
+                p[i].coo[0] = X;
+                p[i].coo[1] = Y;
+                p[i].identifer = i + 1;
 
-        if (Y == 0)
-        {
-            X = 1 + rand() % intersectionnumber;
-            sprintf(str, "%d", X);
-            fprintf(f, "C%s ", str);
+                hashval = Hash(X, Y);
+
+                lp = (List *)malloc(sizeof(List));
+                lp->x = X;
+                lp->y = Y;
+                lp->next = NULL;
+
+                if (hashtable[hashval] == NULL)
+                {
+                    hashtable[hashval] = lp;
+                }
+                else
+                {
+                    lq = hashtable[hashval];
+                    while (lq->next != NULL)
+                    {
+                        lq = lq->next;
+                    }
+                    lq->next = lp;
+                    lp->next = NULL;
+                }
+
+                i++;
+            }
+            else
+            {
+                continue;
+            }
         }
-        else
-        {
-            X = 1 + rand() % N;
-            sprintf(str, "%d", X);
-            fprintf(f, "%s ", str);
-        }
-        fprintf(f, "1\n");
+        freeHashTable(hashtable);
+
+        printf("done\n");
     }
-    printf("done\n");
+    if (Q != 0)
+    {
+        printf("Making request of shortest route\n");
 
-    printf("Making file is succeeded");
+        temp_t = clock();
+        hashtable2 = (List **)malloc(sizeof(List *) * HASH_SIZE);
+        for (i = 0; i < HASH_SIZE; i++)
+        {
+            hashtable2[i] = NULL;
+        }
+
+        i = 0;
+
+        temp_t = clock();
+        temp2_t = clock();
+        while (i < Q)
+        {
+            temp2_t = clock();
+            if ((double)(temp2_t - temp_t) / CLOCKS_PER_SEC > 5)
+            {
+                printf("Error: Couldn't make request of shortest route\n");
+                printf("Probably the number of Q is too big\n");
+                exit(0);
+            }
+
+            X = 1 + rand() % (N + intersectionnumber - 1);
+            for (Y = 1 + rand() % (N + intersectionnumber - 1); Y == X; Y = 1 + rand() % (N + intersectionnumber - 1))
+            {
+            }
+
+            if (X > Y)
+            {
+                temp = X;
+                X = Y;
+                Y = temp;
+            }
+
+            if (searchVal(hashtable2, X, Y) == FALSE)
+            {
+                if (X < N)
+                {
+                    sprintf(str, "%d", X);
+                    fprintf(f, "%s ", str);
+                }
+                else
+                {
+                    sprintf(str, "%d", 1 + X - N);
+                    fprintf(f, "C%s ", str);
+                }
+
+                if (Y < N)
+                {
+                    sprintf(str, "%d", Y);
+                    fprintf(f, "%s ", str);
+                }
+                else
+                {
+                    sprintf(str, "%d", 1 + Y - N);
+                    fprintf(f, "C%s ", str);
+                }
+
+                fprintf(f, "%d\n", 1 + rand() % 10);
+
+                hashval = Hash(X, Y);
+                lp = (List *)malloc(sizeof(List));
+                lp->x = X;
+                lp->y = Y;
+                lp->next = NULL;
+
+                if (hashtable2[hashval] == NULL)
+                {
+                    hashtable2[hashval] = lp;
+                }
+                else
+                {
+                    lq = hashtable2[hashval];
+                    while (lq->next != NULL)
+                    {
+                        lq = lq->next;
+                    }
+                    lq->next = lp;
+                    lp->next = NULL;
+                }
+
+                i++;
+                temp = clock();
+            }
+            else
+            {
+                continue;
+            }
+        }
+        freeHashTable(hashtable2);
+
+        printf("done\n");
+    }
+    printf("Making file is succeeded\n");
+    end = clock();
+    printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
 
     fclose(f);
 
@@ -147,9 +439,25 @@ int main()
 
 void deter(Connection c[], Point p[], int numline)
 {
-    int combi, i, j, lines[numline][2][2]; //[linenumber][point][coordinate]
-    float intersection[2];
+    int combi, i, j, k = 0, m, n;
+    int ***lines; //[linenumber][point][coordinate]
+    int n_p = 10; //max number of point on a segment
+    float dist1, dist2, tmpd1, tmpd2, tmpx, tmpy;
     float det, s, t;
+    int flag;
+
+    //-------------------------------------------------------//
+    //detected warnings in my laptop so I changed to make arrays
+    lines = (int ***)malloc(sizeof(int **) * numline);
+    for (i = 0; i < numline; i++)
+    {
+        lines[i] = (int **)malloc(sizeof(int *) * 2);
+        for (j = 0; j < 2; j++)
+        {
+            lines[i][j] = (int *)malloc(sizeof(int) * 2);
+        }
+    }
+
     //make lines
     for (i = 0; i < numline; i++)
     {
@@ -157,12 +465,15 @@ void deter(Connection c[], Point p[], int numline)
         lines[i][0][1] = p[c[i].connect[0] - 1].coo[1];
         lines[i][1][0] = p[c[i].connect[1] - 1].coo[0];
         lines[i][1][1] = p[c[i].connect[1] - 1].coo[1];
-    }
 
+        //printf("%d, %d, %d, %d\n",lines[i][0][0], lines[i][0][1],lines[i][1][0],lines[i][1][1]);
+    }
     for (i = 0; i < numline; i++)
     {
+        m = 0;
         for (j = i + 1; j < numline; j++)
         {
+            //printf("%d, %d\n", i, j);
             //easy to see
             int xp1, yp1, xp2, yp2, xq1, yq1, xq2, yq2;
             xp1 = lines[i][0][0];
@@ -173,54 +484,90 @@ void deter(Connection c[], Point p[], int numline)
             yp2 = lines[j][0][1];
             xq2 = lines[j][1][0];
             yq2 = lines[j][1][1];
+            //printf("(%d,%d)-(%d,%d), (%d,%d)-(%d,%d)\n", xp1, yp1, xq1, yq1, xp2, yp2, xq2, yq2);
 
-            /*
-            printf("p1x = %d, p1y = %d\nq1x = %d, q1y = %d\np2x = %d, p2y = %d\nq2x = %d, q2y = %d\n\n",
-           xp1, yp1, xq1, yq1, xp2, yp2, xq2, yq2);
-            */
             det = (xq1 - xp1) * (yp2 - yq2) + (xq2 - xp2) * (yq1 - yp1);
-
+            //printf("%f\n",det);
             ////////////////
             //det[0] = (lines[0][1][0]-lines[0][0][0])*(lines[1][0][1]-lines[1][1][1])+(lines[1][1][0]-lines[1][0][0])*(lines[0][1][1]-lines[0][0][1]);
+            /*
             if (det < 0)
             {
                 det *= -1;
             }
-
-            if (pow(10, -7) <= det && det <= pow(10, -7))
+            */
+            //printf("%f\n",det);
+            if (det == 0)
             {
                 //printf("NA1\n");
             }
             else
             {
-                s = ((yp2 - yq2) * (xp2 - xp1) + (xq2 - xp2) * (yp2 - yp1)) / det;
-                t = ((yp1 - yq1) * (xp2 - xp1) + (xq1 - xp1) * (yp2 - yp1)) / det;
-
-                if ((0 < s && s < 1) && (0 < t && t < 1))
+                if (pow(10, -8) <= det && det <= pow(10, -8))
                 {
-                    intersection[0] = xp2 + (xq2 - xp2) * t;
-                    intersection[1] = yp2 + (yq2 - yp2) * t;
-                    intersectionnumber++;
-                    //printf("number = %d, x = %f, y = %f, \n", intersectionnumber, intersection[0], intersection[1]);
+                    //printf("NA1\n");
                 }
                 else
                 {
-                    //printf("NA2\n");
+                    s = ((yp2 - yq2) * (xp2 - xp1) + (xq2 - xp2) * (yp2 - yp1)) / det;
+                    t = ((yp1 - yq1) * (xp2 - xp1) + (xq1 - xp1) * (yp2 - yp1)) / det;
+                    //printf("%f,%f\n", s, t);
+
+                    if (0 < s && s < 1 && 0 < t && t < 1)
+                    {
+
+                        k++;
+                    }
+                    else
+                    {
+                        // printf("NA2\n");
+                    }
                 }
             }
         }
     }
-    /*
-    if (sizeof(intersection) != 0)
+    intersectionnumber = k;
+}
+
+int combination(int n, int m)
+{
+    if (m == 0 || m == n)
+        return 1;
+    else
+        return combination(n - 1, m) + combination(n - 1, m - 1);
+}
+
+int Hash(int key1, int key2)
+{
+    return (key1 + 2 * key2) % HASH_SIZE;
+}
+
+int searchVal(List **T, int key1, int key2)
+{
+    List *p;
+
+    for (p = T[Hash(key1, key2)]; p != NULL; p = p->next)
     {
-        for (i = 0; i < k; i++)
+        if (key1 == p->x && key2 == p->y)
         {
-            printf("%f, %f\n", intersection[i][0], intersection[i][1]);
+            return TRUE;
         }
     }
-    else
+    return FALSE;
+}
+
+void freeHashTable(List **T)
+{
+    int i;
+    List *p, *q;
+
+    for (i = 0; i < HASH_SIZE; i++)
     {
-        printf("NA\n");
+        for (p = T[i]; p != NULL;)
+        {
+            q = p->next;
+            free(p);
+            p = q;
+        }
     }
-    */
 }
