@@ -147,8 +147,11 @@ while(1){
 	printf("2-----optimal road construction to the new points.\n");
 	printf("3-------------------------------highway detection.\n");
 	printf("0--------------------------------------------quit.\n");
+
+    printf("\n(Please refer to https://github.com/ie03-aizu-2019/ie03project-spacea\nfor how to use and more detail.)\n\n");
     printf("Option selection:");
 	scanf("%d",&option);
+/*
     printf("Input format:\n\n");
     printf("----------------------\n");
     printf("N M P Q\n");
@@ -164,14 +167,15 @@ while(1){
     printf("From x_1 y_1 to x_n y_n are coordinates of locations\n");
     printf("From b_1 e_1 to b_m e_m are start and end location IDs of line segments\n");
     printf("From new_x_1 new_y_1 to new_x_p new_y_p are coordinates of new locations\n");
-    printf("From s_1 d_1 k_1 to s_q d_q k_q are start and end location IDs and number of k-th shortest paths for query.\n\n");
+    printf("From s_1 d_1 k_1 to s_q d_q k_q are start and end location IDs and number of k-th shortest paths for query.\n\nfile");
 //	printf("please input you data first\n");
 //	printf("The first line contains the number of locations N, the number of roads M, the number of additional locations P, and the number of path queries Q separated by a space.\n");
+ */
 	switch(option){
 		case 1:
             printf("Finding shortest paths.\n");
             //Segments *segments;
-            printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
+            printf("Input data:\n");
             scanf("%d %d %d %d", &N, &M, &P, &Q);
             //make array
             p = (Point *)malloc(sizeof(Point) * N);
@@ -183,14 +187,14 @@ while(1){
             //input data
             for (i = 0; i < N; i++)
             {
-                printf("Coordinate number %d: ",i+1);
+                // printf("Coordinate number %d: ",i+1);
                 scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
                 p[i].identifer = i + 1;
             }
 
             for (i = 0; i < M; i++)
             {
-                printf("Line number %d: ",i+1);
+                // printf("Line number %d: ",i+1);
                 scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
             }
             //calc intersection
@@ -203,7 +207,7 @@ while(1){
             //search route
             for (i = 0; i < Q; i++)
             {
-                printf("[start point] [destination] [number of route]: ");
+                // printf("[start point] [destination] [number of route]: ");
                 scanf("%s %s %d", str_from, str_to, &k_short);
                 searchK_route(str_from, str_to, k_short);
             }	
@@ -469,15 +473,15 @@ void deter(Connection c[], Point p[], int numline)
         //printf("num of intersection %d\n", k);
         // rearrange(inter, k);
         sort(0,k-1,inter);
-        printf("intersection\n");
-        for (i = 0; i < k; i++)
-        {
-            printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
-            //printf("line %d and %d \n", inter[i].crossline[0], inter[i].crossline[1]);
-            //printf("line1 point %d and %d ", c[inter[i].crosslile[0]].connect[0], c[inter[i].crosslile[0]].connect[1]);
-            //printf("line2 point %d and %d\n", c[inter[i].crosslile[1]].connect[0], c[inter[i].crosslile[1]].connect[1]);
-        }
-        printf("\n");
+        // printf("intersection\n");
+        // for (i = 0; i < k; i++)
+        // {
+        //     printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
+        //     //printf("line %d and %d \n", inter[i].crossline[0], inter[i].crossline[1]);
+        //     //printf("line1 point %d and %d ", c[inter[i].crosslile[0]].connect[0], c[inter[i].crosslile[0]].connect[1]);
+        //     //printf("line2 point %d and %d\n", c[inter[i].crosslile[1]].connect[0], c[inter[i].crosslile[1]].connect[1]);
+        // }
+        // printf("\n");
     }
     else
     {
@@ -769,10 +773,10 @@ void makeEdges()
     edgenumber = edgeindex;
     //printf("edgenumber %d\n", edgenumber);
 
-    for (i = 0; i < edgenumber; i++)
-    {
-        printf("edge[%d] {%s, %s, %f}\n", i, edges[i].node[0], edges[i].node[1], edges[i].cost);
-    }
+    // for (i = 0; i < edgenumber; i++)
+    // {
+    //     printf("edge[%d] {%s, %s, %f}\n", i, edges[i].node[0], edges[i].node[1], edges[i].cost);
+    // }
 }
 
 void sortAlign(Align *list, int left, int right)
@@ -860,11 +864,11 @@ void makeGraph(Point p[], Intersection inter[], int k, int n)
     }
 
     nodenumber = len_node;
-    for (i = 0; i < nodenumber; i++)
-    {
-        printf("node[%d] %s\n", i, nodes[i].ID); // nodes[i].coo[0], nodes[i].coo[1]);
-    }
-    printf("nodes: %d, edges:%d\n\n", nodenumber, edgenumber);
+    // for (i = 0; i < nodenumber; i++)
+    // {
+    //     printf("node[%d] %s\n", i, nodes[i].ID); // nodes[i].coo[0], nodes[i].coo[1]);
+    // }
+    // printf("nodes: %d, edges:%d\n\n", nodenumber, edgenumber);
 }
 
 void resetNodeStatus()
