@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <ctype.h>
 
 #define QUEUE_MAX 10000
 //use for route search
@@ -138,7 +139,7 @@ int main()
     int i, j; //loop variable
 
     //////interface
-    int firsttime = 0;
+    int firsttime = 1;
     char again[4];
     int intype; //for data input type (by hand or file)
     FILE *fp;
@@ -153,12 +154,18 @@ int main()
 
 	//interface: need to 1.add function to case, 2.add remind for inputdata, 3.add input part to each functions.
 while(1){
-    if(firsttime != 0){
-        printf("Do you want to do it again?(yes/no)");
+    if(firsttime != 1){
+        printf("Do you want to do it again?(yes/no): ");
         scanf("%s",&again);
-        if(again == "no")exit(1);
+        for(int i = 0; again[i]; i++){
+            again[i] = tolower(again[i]);
+        }
+        char no[4] = "no";
+        if(strcmp(again,"no") == 0 ||strcmp(again,"n") == 0){
+            return 0;
+        }
     }
-    firsttime = 1;
+    firsttime = 0;
 	printf("What kind of function do you want to use?\n");
 	printf("Input the number of the function.\n");
 	printf("1------------------------------------shortest path\n");
