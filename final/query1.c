@@ -78,8 +78,9 @@ typedef struct
 */
 
 void deter(Connection c[], Point p[], int numline);
-void sort(int low, int high, Intersection aa[]);
-void merge(int low, int mid, int high, Intersection aa[]);
+// void sort(int low, int high, Intersection aa[]);
+// void merge(int low, int mid, int high, Intersection aa[]);
+void mergesort(Intersection A[],int left,int right);
 
 //-------make nodes and edges-----//
 void makeEdges();
@@ -114,6 +115,7 @@ void searchHighways();
 Point *p, *new_p;
 Connection *c;
 Intersection *inter;
+Intersection *tmp_inter; //data memory used for merge sort
 Node *nodes;
 Edge *edges;
 int intersectionnumber; // intersection number
@@ -211,6 +213,7 @@ while(1){
                 p = (Point *)malloc(sizeof(Point) * N);
                 c = (Connection *)malloc(sizeof(Connection) * M);
                 inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+                tmp_inter = (Intersection *)malloc(sizeof(Intersection) * 50000); //use for merge sort
                 for (i = 0; i < N; i++)
                 {
                     fscanf(fp,"%d%d", &p[i].coo[0],&p[i].coo[1]);
@@ -372,6 +375,7 @@ while(1){
                 p = (Point *)malloc(sizeof(Point) * N);
                 c = (Connection *)malloc(sizeof(Connection) * M);
                 inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
+                tmp_inter = (Intersection *)malloc(sizeof(Intersection) * 50000); //use for merge sort
 
                 //input data
                 for (i = 0; i < N; i++)
@@ -601,7 +605,12 @@ void deter(Connection c[], Point p[], int numline)
         // inter = (Intersection *)malloc(sizeof(Intersection) * k);
         //printf("num of intersection %d\n", k);
         // rearrange(inter, k);
-        sort(0,k-1,inter);
+        //sort(0,k-1,inter);
+        // for (i = 0; i < k; i++)
+        // {
+        //     printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
+        // }
+        mergesort(inter,0,k-1);
         printf("intersection\n");
         for (i = 0; i < k; i++)
         {
@@ -632,89 +641,111 @@ void deter(Connection c[], Point p[], int numline)
     intersectionnumber = k;
     // free(lines);
 }
-void rearrange(Intersection aa[], int k)
-{
-    int i, j, c;
-    float a, b;
-    Intersection tmp;
-    for (i = 0; i < k; i++)
-    {
-        for (j = i; j < k; j++)
-        {
-            if (aa[i].coo[0] > aa[j].coo[0])
-            {
-                /*
-                a = aa[j].coo[0];
-                b = aa[j].coo[1];
-                aa[j].coo[0] = aa[i].coo[0];
-                aa[j].coo[1] = aa[i].coo[1];
-                aa[i].coo[0] = a;
-                aa[i].coo[1] = b;
-                */
-                tmp = aa[i];
-                aa[i] = aa[j];
-                aa[j] = tmp;
-            }
-            else if (aa[i].coo[0] == aa[j].coo[0])
-            {
-                if (aa[i].coo[1] > aa[j].coo[1])
-                {
-                    /*
-                    a = aa[j].coo[0];
-                    b = aa[j].coo[1];
-                    aa[j].coo[0] = aa[i].coo[0];
-                    aa[j].coo[1] = aa[i].coo[1];
-                    aa[i].coo[0] = a;
-                    aa[i].coo[1] = b;
-                    */
-                    tmp = aa[i];
-                    aa[i] = aa[j];
-                    aa[j] = tmp;
-                }
-            }
-            aa[i].ID = i + 1;
+// void rearrange(Intersection aa[], int k)
+// {
+//     int i, j, c;
+//     float a, b;
+//     Intersection tmp;
+//     for (i = 0; i < k; i++)
+//     {
+//         for (j = i; j < k; j++)
+//         {
+//             if (aa[i].coo[0] > aa[j].coo[0])
+//             {
+//                 /*
+//                 a = aa[j].coo[0];
+//                 b = aa[j].coo[1];
+//                 aa[j].coo[0] = aa[i].coo[0];
+//                 aa[j].coo[1] = aa[i].coo[1];
+//                 aa[i].coo[0] = a;
+//                 aa[i].coo[1] = b;
+//                 */
+//                 tmp = aa[i];
+//                 aa[i] = aa[j];
+//                 aa[j] = tmp;
+//             }
+//             else if (aa[i].coo[0] == aa[j].coo[0])
+//             {
+//                 if (aa[i].coo[1] > aa[j].coo[1])
+//                 {
+//                     /*
+//                     a = aa[j].coo[0];
+//                     b = aa[j].coo[1];
+//                     aa[j].coo[0] = aa[i].coo[0];
+//                     aa[j].coo[1] = aa[i].coo[1];
+//                     aa[i].coo[0] = a;
+//                     aa[i].coo[1] = b;
+//                     */
+//                     tmp = aa[i];
+//                     aa[i] = aa[j];
+//                     aa[j] = tmp;
+//                 }
+//             }
+//             aa[i].ID = i + 1;
+//         }
+//     }
+// }
+// void sort(int low, int high, Intersection aa[]){
+//     int mid;
+//     if(low < high){
+//         mid = (low + high) / 2;
+//         sort(low, mid, aa);
+//         sort(mid+1, high, aa);
+//         merge(low,mid,high, aa);
+//     }
+// }
+// void merge(int low, int mid, int high, Intersection aa[]){
+//     int l1, l2, i;
+//     Intersection tmp[30];
+//     for(l1=low, l2=mid+1, i=low; l1<=mid && l2<=high; i++){
+//         if (aa[l1].coo[0] < aa[l2].coo[0])
+//         {
+//             tmp[i] = aa[l1++];
+//         }else if (aa[l1].coo[0] == aa[l2].coo[0])
+//         {
+//             if (aa[l1].coo[1] < aa[l2].coo[1])
+//             {
+//                 tmp[i] = aa[l1++];
+//             }
+//         }else{
+//             tmp[i] = aa[l2++];
+//         }
+//         aa[i].ID = i + 1;
+//     }
+//     while(l1 <= mid){
+//         tmp[i++] = aa[l1++];
+//     }
+//     while(l2 <= high){
+//         tmp[i++] = aa[l2++];
+//     }
+//     for(i = low; i <= high; i++){
+//         aa[i] = tmp[i];
+//         aa[i].ID = i+1;
+//     }
+// }
+void mergesort(Intersection A[],int left,int right){
+    int i,j,k,mid;
+    if (right>left) {
+        mid=(right+left)/2; /*DIVIDE*/
+        mergesort(A,left,mid);
+        mergesort(A,mid+1,right);
+        for (i=left;i<=mid;i++){
+            tmp_inter[i]=A[i];
+            // printf("A1: %f, %f\n",A[i].coo[0],A[i].coo[1]);
+        } 
+        
+        for (i=mid+1,j=right;i<=right;i++,j--){
+            tmp_inter[i]=A[j];
+            // printf("A2: %f, %f\n",A[j].coo[0],A[j].coo[1]);
+        } 
+        i=left; j=right; /*CONQUER*/
+        for (k = left; k <= right; k++){
+            if (tmp_inter[i].coo[0]<tmp_inter[j].coo[0]) A[k]=tmp_inter[i++];
+            else if (tmp_inter[i].coo[0]==tmp_inter[j].coo[0] && tmp_inter[i].coo[1]<tmp_inter[j].coo[1]) A[k]=tmp_inter[i++];
+            else A[k]=tmp_inter[j--];
         }
     }
 }
-void sort(int low, int high, Intersection aa[]){
-    int mid;
-    if(low < high){
-        mid = (low + high) / 2;
-        sort(low, mid, aa);
-        sort(mid+1, high, aa);
-        merge(low,mid,high, aa);
-    }
-}
-void merge(int low, int mid, int high, Intersection aa[]){
-    int l1, l2, i;
-    Intersection tmp[30];
-    for(l1=low, l2=mid+1, i=low; l1<=mid && l2<=high; i++){
-        if (aa[l1].coo[0] < aa[l2].coo[0])
-        {
-            tmp[i] = aa[l1++];
-        }else if (aa[l1].coo[0] == aa[l2].coo[0])
-        {
-            if (aa[l1].coo[1] < aa[l2].coo[1])
-            {
-                tmp[i] = aa[l1++];
-            }
-        }else{
-            tmp[i] = aa[l2++];
-        }
-        aa[i].ID = i + 1;
-    }
-    while(l1 <= mid){
-        tmp[i++] = aa[l1++];
-    }
-    while(l2 <= high){
-        tmp[i++] = aa[l2++];
-    }
-    for(i = low; i <= high; i++){
-        aa[i] = tmp[i];
-        aa[i].ID = i+1;
-    }
-}
-
 void makeEdges()
 {
     int *allignpoints;
