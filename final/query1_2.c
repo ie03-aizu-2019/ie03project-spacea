@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <omp.h>
 
 #define QUEUE_MAX 10000
 //use for route search
@@ -138,6 +139,7 @@ int option;
 
 int main()
 {
+    double st,et; //for checking runtime
     int i, j; //loop variable
     clock_t start, end;
 
@@ -221,7 +223,7 @@ int main()
                 if (fp == NULL)
                 {
                     printf("error: file not found.\n");
-                    exit(1);
+                    continue;
                 }
                 fscanf(fp, "%d%d%d%d", &N, &M, &P, &Q);
                 // printf("%d %d %d %d",N,M,P,Q);
@@ -270,7 +272,8 @@ int main()
 
             //calc intersection
             deter(c, p, M);
-
+end = clock();
+            printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
             //make graph
             makeEdges();
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
@@ -299,8 +302,8 @@ int main()
             free(inter);
             free(nodes);
             free(edges);
-            end = clock();
-            printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
+            // end = clock();
+            // printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
 
             printf("end of the program\n\n");
             break;
@@ -321,7 +324,7 @@ int main()
                 if (fp == NULL)
                 {
                     printf("error: file not found.\n");
-                    exit(1);
+                    continue;
                 }
                 fscanf(fp, "%d%d%d%d", &N, &M, &P, &Q);
                 // //make array
@@ -406,7 +409,7 @@ int main()
                 if (fp == NULL)
                 {
                     printf("error: file not found.\n");
-                    exit(1);
+                    continue;
                 }
                 fscanf(fp, "%d%d%d%d", &N, &M, &P, &Q);
                 //make array
@@ -478,87 +481,16 @@ int main()
             return 0;
         }
     }
-
-    //Segments *segments;
-    // scanf("%d %d %d %d", &N, &M, &P, &Q);
-
-    // //make array
-    // p = (Point *)malloc(sizeof(Point) * N);
-    // c = (Connection *)malloc(sizeof(Connection) * M);
-    // inter = (Intersection *)malloc(sizeof(Intersection) * 50000);
-    // // float segments[M][30][2];
-    // //segments = (Segments *)malloc(sizeof(Segments) * M);
-
-    // //input data
-    // for (i = 0; i < N; i++)
-    // {
-    //     scanf("%d %d", &p[i].coo[0], &p[i].coo[1]);
-    //     p[i].identifer = i + 1;
-    // }
-
-    // for (i = 0; i < M; i++)
-    // {
-    //     scanf("%d %d", &c[i].connect[0], &c[i].connect[1]);
-    // }
-    // //calc intersection
-    // deter(c, p, M);
-
-    // //make graph
-    // makeEdges();
-    // makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
-
-    // //search route
-    // for (i = 0; i < Q; i++)
-    // {
-    //     scanf("%s %s %d", str_from, str_to, &k_short);
-    //     searchK_route(str_from, str_to, k_short);
-    // }
-
-    // //search Highway
-    // //searchHighways();
-
-    // //release mmemories
-    // free(p);
-    // free(c);
-    // free(inter);
-    // free(nodes);
-    // free(edges);
-    // printf("end of the program");
-    //    return 0;
 }
 
 void deter(Connection c[], Point p[], int numline)
 {
     int combi, i, j, k = 0, n;
-    int ***lines; //[linenumber][point][coordinate]
+    // int ***lines; //[linenumber][point][coordinate]
     int n_p = 10; //max number of point on a segment
     float dist1, dist2, tmpd1, tmpd2, tmpx, tmpy;
     float det, s, t;
     int flag;
-    /*
-    //-------------------------------------------------------//
-    //detected warnings in my laptop so I changed to make arrays
-    lines = (int ***)malloc(sizeof(int **) * numline);
-    for (i = 0; i < numline; i++)
-    {
-        lines[i] = (int **)malloc(sizeof(int *) * 2);
-        for (j = 0; j < 2; j++)
-        {
-            lines[i][j] = (int *)malloc(sizeof(int) * 2);
-        }
-    }
-
-    //make lines
-    for (i = 0; i < numline; i++)
-    {
-        lines[i][0][0] = p[c[i].connect[0] - 1].coo[0];
-        lines[i][0][1] = p[c[i].connect[0] - 1].coo[1];
-        lines[i][1][0] = p[c[i].connect[1] - 1].coo[0];
-        lines[i][1][1] = p[c[i].connect[1] - 1].coo[1];
-
-        //printf("%d, %d, %d, %d\n",lines[i][0][0], lines[i][0][1],lines[i][1][0],lines[i][1][1]);
-    }
-*/
     for (i = 0; i < numline; i++)
     {
         for (j = i + 1; j < numline; j++)
@@ -566,16 +498,6 @@ void deter(Connection c[], Point p[], int numline)
             //printf("%d, %d\n", i, j);
             //easy to see
             int xp1, yp1, xp2, yp2, xq1, yq1, xq2, yq2;
-            /* 
-            xp1 = lines[i][0][0];
-            yp1 = lines[i][0][1];
-            xq1 = lines[i][1][0];
-            yq1 = lines[i][1][1];
-            xp2 = lines[j][0][0];
-            yp2 = lines[j][0][1];
-            xq2 = lines[j][1][0];
-            yq2 = lines[j][1][1];
-*/
             xp1 = p[c[i].connect[0] - 1].coo[0];
             yp1 = p[c[i].connect[0] - 1].coo[1];
             xq1 = p[c[i].connect[1] - 1].coo[0];
@@ -584,19 +506,9 @@ void deter(Connection c[], Point p[], int numline)
             yp2 = p[c[j].connect[0] - 1].coo[1];
             xq2 = p[c[j].connect[1] - 1].coo[0];
             yq2 = p[c[j].connect[1] - 1].coo[1];
-            //printf("(%d,%d)-(%d,%d), (%d,%d)-(%d,%d)\n", xp1, yp1, xq1, yq1, xp2, yp2, xq2, yq2);
 
             det = (xq1 - xp1) * (yp2 - yq2) + (xq2 - xp2) * (yq1 - yp1);
-            //printf("%f\n",det);
             ////////////////
-            //det[0] = (lines[0][1][0]-lines[0][0][0])*(lines[1][0][1]-lines[1][1][1])+(lines[1][1][0]-lines[1][0][0])*(lines[0][1][1]-lines[0][0][1]);
-            /*
-            if (det < 0)
-            {
-                det *= -1;
-            }
-            */
-            //printf("%f\n",det);
             if (det == 0)
             {
                 //printf("NA1\n");
@@ -636,127 +548,20 @@ void deter(Connection c[], Point p[], int numline)
     {
         intersectionnumber = k;
 
-        // inter = (Intersection *)malloc(sizeof(Intersection) * k);
-        //printf("num of intersection %d\n", k);
-        // rearrange(inter, k);
-        //sort(0,k-1,inter);
-        // for (i = 0; i < k; i++)
-        // {
-        //     printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
-        // }
         mergesort(inter, 0, k - 1);
         deleteSameIntersection(inter);
         // printf("intersection\n");
-        // for (i = 0; i < intersectionnumber; i++)
-        // {
-        //     printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
-        //     //printf("line %d and %d \n", inter[i].crossline[0], inter[i].crossline[1]);
-        //     //printf("line1 point %d and %d ", c[inter[i].crosslile[0]].connect[0], c[inter[i].crosslile[0]].connect[1]);
-        //     //printf("line2 point %d and %d\n", c[inter[i].crosslile[1]].connect[0], c[inter[i].crosslile[1]].connect[1]);
-        // }
+        for (i = 0; i < intersectionnumber; i++)
+        {
+            printf("C%d, (%f, %f) \n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
+        }
         // printf("\n");
     }
     else
     {
         printf("%d,NA3\n", k);
     }
-    /*
-    for (n = 0; n < numline; n++)
-    {
-        printf("{");
-        for (m = 0; m < n_p; m++)
-        {
-            printf("%f, ", dist[n][m]);
-        }
-        printf("}\n");
-    }
-
-    printf("+++++++++++++++++++++++++++++++++++\n");
-*/
-    // free(lines);
 }
-// void rearrange(Intersection aa[], int k)
-// {
-//     int i, j, c;
-//     float a, b;
-//     Intersection tmp;
-//     for (i = 0; i < k; i++)
-//     {
-//         for (j = i; j < k; j++)
-//         {
-//             if (aa[i].coo[0] > aa[j].coo[0])
-//             {
-//                 /*
-//                 a = aa[j].coo[0];
-//                 b = aa[j].coo[1];
-//                 aa[j].coo[0] = aa[i].coo[0];
-//                 aa[j].coo[1] = aa[i].coo[1];
-//                 aa[i].coo[0] = a;
-//                 aa[i].coo[1] = b;
-//                 */
-//                 tmp = aa[i];
-//                 aa[i] = aa[j];
-//                 aa[j] = tmp;
-//             }
-//             else if (aa[i].coo[0] == aa[j].coo[0])
-//             {
-//                 if (aa[i].coo[1] > aa[j].coo[1])
-//                 {
-//                     /*
-//                     a = aa[j].coo[0];
-//                     b = aa[j].coo[1];
-//                     aa[j].coo[0] = aa[i].coo[0];
-//                     aa[j].coo[1] = aa[i].coo[1];
-//                     aa[i].coo[0] = a;
-//                     aa[i].coo[1] = b;
-//                     */
-//                     tmp = aa[i];
-//                     aa[i] = aa[j];
-//                     aa[j] = tmp;
-//                 }
-//             }
-//             aa[i].ID = i + 1;
-//         }
-//     }
-// }
-// void sort(int low, int high, Intersection aa[]){
-//     int mid;
-//     if(low < high){
-//         mid = (low + high) / 2;
-//         sort(low, mid, aa);
-//         sort(mid+1, high, aa);
-//         merge(low,mid,high, aa);
-//     }
-// }
-// void merge(int low, int mid, int high, Intersection aa[]){
-//     int l1, l2, i;
-//     Intersection tmp[30];
-//     for(l1=low, l2=mid+1, i=low; l1<=mid && l2<=high; i++){
-//         if (aa[l1].coo[0] < aa[l2].coo[0])
-//         {
-//             tmp[i] = aa[l1++];
-//         }else if (aa[l1].coo[0] == aa[l2].coo[0])
-//         {
-//             if (aa[l1].coo[1] < aa[l2].coo[1])
-//             {
-//                 tmp[i] = aa[l1++];
-//             }
-//         }else{
-//             tmp[i] = aa[l2++];
-//         }
-//         aa[i].ID = i + 1;
-//     }
-//     while(l1 <= mid){
-//         tmp[i++] = aa[l1++];
-//     }
-//     while(l2 <= high){
-//         tmp[i++] = aa[l2++];
-//     }
-//     for(i = low; i <= high; i++){
-//         aa[i] = tmp[i];
-//         aa[i].ID = i+1;
-//     }
-// }
 void mergesort(Intersection A[], int left, int right)
 {
     int i, j, k, mid;
@@ -833,7 +638,7 @@ void makeEdges()
     for (i = 0; i < M; i++)
     {
 
-        printf("%d\n", i);
+        // printf("%d\n", i);
         for (j = 0; j < MAX_ALIGNLIST; j++)
         {
             //reset
@@ -1551,13 +1356,10 @@ void searchHighways()
 void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numline)
 {
     int combi, i, j, m, n;
-    int ***lines; //lines[numline][2][2]; //[linenumber][point][coordinate]
     int n_p = 10; //max number of point on a segment
-    //float lines1[numline][n_p][2]
-    float **dist; //float dist[numline][n_p];
     float dist1, dist2, tmpd = 0, tmpd1, tmpd2, tmpx = 0, tmpy = 0;
     float det, s, t;
-
+    if(num_new_p > 0){
     for (i = 0; i < num_new_p; i++)
     {
         int new_x, new_y;
@@ -1629,5 +1431,8 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
             }
         }
         printf("%f, %f, dist = %f\n", tmpx, tmpy, tmpd);
+    }
+    }else{
+        printf("Please check data input again\n\n");
     }
 }
