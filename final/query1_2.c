@@ -801,7 +801,7 @@ void makeEdges()
             strcpy(edges[edgeindex].node[1], tmpstr[1]);
             edges[edgeindex].cost = List.dist_list[j + 1] - List.dist_list[j];
             edges[edgeindex].is_exist = TRUE;
-            //printf("{%s, %s, %f}\n", edges[edgeindex].node[0], edges[edgeindex].node[1], edges[edgeindex].cost);
+            // printf("{%s, %s, %f}\n", edges[edgeindex].node[0], edges[edgeindex].node[1], edges[edgeindex].cost);
             edgeindex++;
         }
     }
@@ -872,7 +872,7 @@ void sortAlign(Align *list, int left, int right)
     if (left < right)
     {
         sortAlign(list, left, i - 1);
-        sortAlign(list, right, j + 1);
+        sortAlign(list, j + 1, right);
     }
 }
 
@@ -931,18 +931,18 @@ void searchRoute(char *from, char *to)
 
     pushDist(nodes[from_index].ID, nodes[from_index].dist);
 
-    //printf("search %s %s\n", from, to);
+    // printf("search %s %s\n", from, to);
 
     while (qd_tale != 0)
     {
-
+    
         q = popDist();
-        //printf("%f\n", q.dist);
+        // printf("%f\n", q.dist);
         from_index = getNodeindex(q.ID);
         if (nodes[from_index].status == BLACK)
         {
             //already know shortest distance
-            //printf("continue\n");
+            // printf("continue\n");
             continue;
         }
         nodes[from_index].status = BLACK;
@@ -952,14 +952,14 @@ void searchRoute(char *from, char *to)
             break;
         }
 
-        //printf("from %s, to %s\n", nodes[from_index].ID, to);
+        // printf("from %s, to %s\n", nodes[from_index].ID, to);
 
         //search node which has connection with from node
         for (i = 0; i < edgenumber; i++)
         {
             if (edges[i].is_exist == FALSE)
             {
-                //printf("edge[%d] FALSE\n", i);
+                // printf("edge[%d] FALSE\n", i);
                 continue;
             }
 
@@ -978,7 +978,7 @@ void searchRoute(char *from, char *to)
             if (flag)
             {
                 //has connection
-                //printf("%f, %f\n", nodes[index].dist, nodes[from_index].dist + edges[i].cost);
+                // printf("%f, %f\n", nodes[index].dist, nodes[from_index].dist + edges[i].cost);
                 if (nodes[index].dist > nodes[from_index].dist + edges[i].cost)
                 {
                     //update shortest dist
@@ -1199,7 +1199,6 @@ void searchK_route(char *from, char *to, int k_num)
         //search 1st shortst route
         nodes[from_index].dist = 0;
         searchRoute(from, to);
-
         //input 1st shortest to k_route[0]
         k_route[0] = popRoute();
         if (k_route[0].routecount <= 1)
@@ -1357,6 +1356,7 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
 {
     int combi, i, j, m, n;
     int n_p = 10; //max number of point on a segment
+
     float dist1, dist2, tmpd = 0, tmpd1, tmpd2, tmpx = 0, tmpy = 0;
     float det, s, t;
     if(num_new_p > 0){
