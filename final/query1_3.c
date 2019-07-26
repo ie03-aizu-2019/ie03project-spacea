@@ -30,7 +30,6 @@ typedef struct
 typedef struct
 {
     int ID;
-    int crossline[2];
     float coo[2];
 } Intersection;
 
@@ -1345,14 +1344,12 @@ void pushRoute(char *goalID)
         index = getNodeindex(nodes[index].from_ID);
     }
 
-    //printf("qd[%d] dist %f\n", qr_tale, qr[qr_tale].dist);
-    /*
-    for (i = 0; i < num; i++)
-    {
-        printf("%s ", qr[qr_tale].routeIDs[i]);
-    }
-    printf("\n");
-    */
+    // printf("qd[%d] dist %f\n", qr_tale, qr[qr_tale].dist);
+    // for (i = 0; i < num; i++)
+    // {
+    //     printf("%s ", qr[qr_tale].routeIDs[i]);
+    // }
+    // printf("\n");
 
     qr_tale++;
 }
@@ -1360,8 +1357,9 @@ void pushRoute(char *goalID)
 Queueroute popRoute()
 {
     int min, i;
-    float min_dist = pow(10, 8);
+    float min_dist = pow(10, 15);
     Queueroute searchdata;
+
     for (i = 0; i < qr_tale; i++)
     {
         if (min_dist > qr[i].dist)
@@ -1584,6 +1582,7 @@ void searchHighways()
 
         searchRoute(edges[i].node[0], edges[i].node[1]);
         q = popRoute();
+
         if (q.routecount <= 1)
         {
             printf("Highway[%d](%s , %s)\n", highwaynumber, edges[i].node[0], edges[i].node[1]);
