@@ -125,6 +125,7 @@ void searchK_route(char *, char *, int);
 
 //task8----------------------------//
 void searchHighways();
+int isRouteExist(char *, char *);
 //---------------------------------//
 Point *p, *new_p;
 Connection *c;
@@ -714,6 +715,7 @@ void deter(Connection c[], Point p[], int numline)
     else
     {
         printf("%d,NA3\n", k);
+        intersectionnumber = 0;
     }
 }
 void mergesort(Intersection A[], int left, int right)
@@ -1572,18 +1574,19 @@ void searchHighways()
 
     for (i = 0; i < edgenumber; i++)
     {
+        // printf("%d\n", i);
         edges[i].is_exist = FALSE;
         //printf("edge[%d] {%s, %s, %f} false\n", i, edges[i].node[0], edges[i].node[1], edges[i].cost);
         //printf("search {%s, %s} \n", edges[i].node[0], edges[i].node[1]);
         resetNodeStatus();
 
-        from_index = getNodeindex(edges[i].node[0]);
-        nodes[from_index].dist = 0;
+        // from_index = getNodeindex(edges[i].node[0]);
+        // nodes[from_index].dist = 0;
 
-        searchRoute(edges[i].node[0], edges[i].node[1]);
-        q = popRoute();
+        // searchRoute(edges[i].node[0], edges[i].node[1]);
+        // q = popRoute();
 
-        if (q.routecount <= 1)
+        if (isRouteExist(edges[i].node[0], edges[i].node[1]) == FALSE)
         {
             printf("Highway[%d](%s , %s)\n", highwaynumber, edges[i].node[0], edges[i].node[1]);
             highwaynumber++;
@@ -1593,6 +1596,79 @@ void searchHighways()
 
     free(qr);
 }
+
+int isRouteExist(char *from, char *to)
+{
+    int from_index, to_index, index;
+    int i, j;
+    int flag;
+    int *cirqueue;
+    int c_h = 0, c_t = 0;
+    LinkedList *l;
+
+    cirqueue = (int *)malloc(sizeof(int) * QUEUE_MAX);
+    if (cirqueue == NULL)
+    {
+        printf("Error 11: Coundn't make cirqueue array\n");
+        exit(11);
+    }
+    from_index = getNodeindex(from);
+
+    cirqueue[c_t] = from_index;
+    c_t++;
+    //printf("search %s %s\n", from, to);
+
+    while (c_h != c_t)
+    {
+
+        from_index = cirqueue[c_h];
+        c_h = (c_h + 1) % QUEUE_MAX;
+        //printf("%f\n", q.dist);
+
+        if (nodes[from_index].status == BLACK)
+        {
+            //already know shortest distance
+            //printf("continue\n");
+            continue;
+        }
+        nodes[from_index].status = BLACK;
+
+        if (strcmp(nodes[from_index].ID, to) == 0)
+        {
+
+            free(cirqueue);
+            return TRUE;
+        }
+
+        //printf("from %s, to %s\n", nodes[from_index].ID, to);
+
+        //search node which has connection with from node
+        for (l = linkedlist[from_index]; l != NULL; l = l->next)
+        {
+            i = l->edge_number;
+            if (edges[i].is_exist == FALSE)
+            {
+                //printf("edge[%d] FALSE\n", i);
+                continue;
+            }
+
+            if (strcmp(nodes[from_index].ID, edges[i].node[0]) == 0)
+            {
+                index = getNodeindex(edges[i].node[1]);
+            }
+            else
+            {
+                index = getNodeindex(edges[i].node[0]);
+            }
+
+            cirqueue[c_t] = index;
+            c_t = (c_t + 1) % QUEUE_MAX;
+        }
+    }
+    free(cirqueue);
+    return FALSE;
+}
+
 void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numline)
 {
     int combi, i, j, m, n;
