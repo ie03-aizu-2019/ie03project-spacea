@@ -92,6 +92,7 @@ void deter(Connection c[], Point p[], int numline);
 void mergesort(Intersection A[], int left, int right);
 void deleteSameIntersection(Intersection *);
 
+void Writefile(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]); //writing file
 //-------make nodes and edges-----//
 void makeEdges();
 void sortAlign(Align *, int, int);
@@ -325,6 +326,7 @@ int main()
 
             //calc intersection
             deter(c, p, M);
+            Writefile("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
             end = clock();
             printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
             //make graph
@@ -613,7 +615,7 @@ int main()
 
             //calc intersection
             deter(c, p, M);
-
+            Writefile("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
             //make graph
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
             makeEdges();
@@ -1755,4 +1757,28 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
     {
         printf("Please check data input again\n\n");
     }
+}
+void Writefile(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]){
+    int i;
+	// create a FILE typed pointer
+	FILE *file_pointer,*file_pointer2; 
+	
+	// open the file "name_of_file.txt" for writing
+	file_pointer = fopen(filename, "w"); 
+ 
+	// Write to the file
+    for(i = 0; i < N;i++){
+	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    }
+    for(i = 0; i < intersectionnumber;i++){
+	    fprintf(file_pointer, "C%d %f %f\n",inter[i].ID,inter[i].coo[0],inter[i].coo[1]);
+    }
+    file_pointer2 = fopen(otherfilename, "w"); 
+    for(i = 0; i < M;i++){
+	    fprintf(file_pointer2, "%d %d\n",c[i].connect[0],c[i].connect[1]);
+    }
+	
+	// Close the file
+	fclose(file_pointer); 
+    fclose(file_pointer2); 
 }
