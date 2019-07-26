@@ -23,7 +23,7 @@
   From s_1 d_1 k_1 to s_q d_q k_q are start and end location IDs and number of k-th shortest paths for query.  
   ```
   
-**EXAMPLE:**  
+**Data input structure:**  
   ```
   N M P Q  
   x_1 y_1  
