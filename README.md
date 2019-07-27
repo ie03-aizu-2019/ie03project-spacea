@@ -107,8 +107,4 @@
   4 6
   ```
 ------
-### upgrade
-#### 2019-7-10
-1. Finish README file
-2. Continue finish task 10
-3. optimization program
+
