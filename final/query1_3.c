@@ -11,7 +11,7 @@
 //use for route search
 #define WHITE 0
 #define BLACK 1
-#define MAX_INTERSECTION 1000000
+#define MAX_INTERSECTION 3000000
 #define MAX_ALIGNLIST 10000
 #define TRUE 1
 #define FALSE -1
@@ -92,8 +92,8 @@ void deter(Connection c[], Point p[], int numline);
 void mergesort(Intersection A[], int left, int right);
 void deleteSameIntersection(Intersection *);
 
-void writefile_inter(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]); //writing file
-void writefile_newp(char *filename,char *otherfilename,Point p[], Point new_p[],Intersection split_p[],Connection c[]);
+void writefile_inter(char *filename, char *otherfilename, Point p[], Intersection inter[], Connection c[]); //writing file
+void writefile_newp(char *filename, char *otherfilename, Point p[], Point new_p[], Intersection split_p[], Connection c[]);
 
 //-------make nodes and edges-----//
 void makeEdges();
@@ -115,6 +115,7 @@ void showRoute(char *);
 
 //Priority queue//
 void pushDist(char *, float);
+void Qd_MinHeapify();
 Queuedist popDist();
 //-----------------------------//
 
@@ -329,10 +330,11 @@ int main()
 
             //calc intersection
             deter(c, p, M);
-            writefile_inter("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
-            end = clock();
-            printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
+            writefile_inter("../testdata/dwrite.txt", "../testdata/dwrite2.txt", p, inter, c);
+            // end = clock();
+            // printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
             //make graph
+            printf("Making graph...");
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
             makeEdges();
 
@@ -361,8 +363,8 @@ int main()
             free(nodes);
             free(edges);
             freeLinkedList();
-            // end = clock();
-            // printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
+            end = clock();
+            printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
 
             printf("end of the program\n\n");
             break;
@@ -405,8 +407,8 @@ int main()
                     printf("Error 2: Coundn't make inter array\n");
                     exit(2);
                 }
-                new_p = (Point *)malloc(sizeof(Point) * P);        
-                split_p = (Intersection *)malloc(P*sizeof(Intersection));
+                new_p = (Point *)malloc(sizeof(Point) * P);
+                split_p = (Intersection *)malloc(P * sizeof(Intersection));
                 if (new_p == NULL)
                 {
                     printf("Error 4: Coundn't make new_p array\n");
@@ -499,7 +501,7 @@ int main()
             start = clock();
 
             newroad(c, p, new_p, P, M);
-            writefile_newp("../testdata/mat.txt","../testdata/mat2.txt",p,new_p,split_p,c);
+            writefile_newp("../testdata/mat.txt", "../testdata/mat2.txt", p, new_p, split_p, c);
             free(p);
             free(new_p);
             free(split_p);
@@ -621,7 +623,7 @@ int main()
 
             //calc intersection
             deter(c, p, M);
-            writefile_inter("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
+            writefile_inter("../testdata/dwrite.txt", "../testdata/dwrite2.txt", p, inter, c);
             //make graph
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
             makeEdges();
@@ -974,12 +976,12 @@ void makeEdges()
         }
     }
     edgenumber = edgeindex;
-    printf("edgenumber %d\n", edgenumber);
+    // printf("edgenumber %d\n", edgenumber);
 
-    for (i = 0; i < edgenumber; i++)
-    {
-        printf("edge[%d] {%s, %s, %f}\n", i, edges[i].node[0], edges[i].node[1], edges[i].cost);
-    }
+    // for (i = 0; i < edgenumber; i++)
+    // {
+    //     printf("edge[%d] {%s, %s, %f}\n", i, edges[i].node[0], edges[i].node[1], edges[i].cost);
+    // }
 }
 
 void sortAlign(Align *list, int left, int right)
@@ -1131,11 +1133,11 @@ void makeGraph(Point p[], Intersection inter[], int k, int n)
     }
 
     nodenumber = len_node;
-    for (i = 0; i < nodenumber; i++)
-    {
-        printf("node[%d] %s\n", i, nodes[i].ID); // nodes[i].coo[0], nodes[i].coo[1]);
-    }
-    printf("nodes: %d\n\n", nodenumber);
+    // for (i = 0; i < nodenumber; i++)
+    // {
+    //     printf("node[%d] %s\n", i, nodes[i].ID); // nodes[i].coo[0], nodes[i].coo[1]);
+    // }
+    // printf("nodes: %d\n\n", nodenumber);
 }
 
 void resetNodeStatus()
@@ -1278,47 +1280,80 @@ int getNodeindex(char *nodeid)
 
 void pushDist(char *nodeid, float dist)
 {
+    int n = qd_tale;
+    int i;
+    Queuedist tmp;
+
     strcpy(qd[qd_tale].ID, nodeid);
     qd[qd_tale].dist = dist;
-    //printf("push qd[%d] %s, %f\n", qd_tale, qd[qd_tale].ID, qd[qd_tale].dist);
+    // printf("push qd[%d] %s, %f\n", qd_tale, qd[qd_taleyes].ID, qd[qd_tale].dist);
     qd_tale++;
+
+    while (n != 0)
+    {
+        i = (n - 1) / 2;
+        if (qd[n].dist < qd[i].dist)
+        {
+            tmp = qd[n];
+            qd[n] = qd[i];
+            qd[i] = tmp;
+        }
+        else if (qd[n].dist == qd[i].dist)
+        {
+            if (qd[n].ID < qd[i].ID)
+            {
+                tmp = qd[n];
+                qd[n] = qd[i];
+                qd[i] = tmp;
+            }
+        }
+        n = i;
+    }
+    // for (i = 0; i < qd_tale; i++)
+    // {
+    //     printf("%f, %s\n", qd[i].dist, qd[i].ID);
+    // }
+    // printf("\n");
 }
 
 Queuedist popDist()
 {
-    int min, i, minid = 0, tmpid = 0;
-    float min_dist = pow(10, 8);
-    Queuedist searchdata;
-    for (i = 0; i < qd_tale; i++)
-    {
-        if (min_dist > qd[i].dist)
-        {
-            min_dist = qd[i].dist;
-            min = i;
-            minid = 0;
-            for (int j = 0; qd[i].ID[j] != '\0'; j++)
-            {
-                minid += 10 * minid + qd[i].ID[j];
-            }
-        }
-        else if (min_dist == qd[i].dist)
-        {
-            tmpid = 0;
-            for (int j = 0; qd[i].ID[j] != '\0'; j++)
-            {
-                tmpid += 10 * tmpid + qd[i].ID[j];
-            }
-            if (tmpid > minid)
-            {
-                min_dist = qd[i].dist;
-                min = i;
-            }
-        }
-    }
-    searchdata = qd[min];
-    //printf("pop qd[%d] %s, %f\n", min, qd[min].ID, qd[min].dist);
-    qd[min] = qd[qd_tale - 1];
+    int n, i;
+    Queuedist searchdata, tmp;
+
+    searchdata = qd[0];
+    // printf("pop qd[0] %s, %f\n", qd[0].ID, qd[0].dist);
+
+    qd[0] = qd[qd_tale - 1];
     qd_tale--;
+    n = qd_tale;
+
+    while (n != 0)
+    {
+        i = (n - 1) / 2;
+        if (qd[n].dist < qd[i].dist)
+        {
+            tmp = qd[n];
+            qd[n] = qd[i];
+            qd[i] = tmp;
+        }
+        else if (qd[n].dist == qd[i].dist)
+        {
+            if (qd[n].ID > qd[i].ID)
+            {
+                tmp = qd[n];
+                qd[n] = qd[i];
+                qd[i] = tmp;
+            }
+        }
+        n = i;
+    }
+    // for (i = 0; i < qd_tale; i++)
+    // {
+    //     printf("%f, %s\n", qd[i].dist, qd[i].ID);
+    // }
+    // printf("\n");
+
     return searchdata;
 }
 
@@ -1329,13 +1364,14 @@ void showRoute(char *goalID)
     {
         showRoute(nodes[index].from_ID);
     }
-    printf("%s ", nodes[index].ID);
+    printf("%8s ", nodes[index].ID);
 }
 
 void pushRoute(char *goalID)
 {
     int index, num = 1;
-    int i;
+    int i, n = qr_tale;
+    Queueroute tmp;
 
     index = getNodeindex(goalID);
     qr[qr_tale].dist = nodes[index].dist;
@@ -1354,33 +1390,52 @@ void pushRoute(char *goalID)
         index = getNodeindex(nodes[index].from_ID);
     }
 
-    // printf("qd[%d] dist %f\n", qr_tale, qr[qr_tale].dist);
-    // for (i = 0; i < num; i++)
-    // {
-    //     printf("%s ", qr[qr_tale].routeIDs[i]);
-    // }
-    // printf("\n");
-
+    while (n != 0)
+    {
+        i = (n - 1) / 2;
+        if (qr[n].dist < qr[i].dist)
+        {
+            tmp = qr[n];
+            qr[n] = qr[i];
+            qr[i] = tmp;
+        }
+        n = i;
+    }
     qr_tale++;
+
+    // for (int j = 0; j < qr_tale-1; j++)
+    // {
+    //     printf("qr[%d] dist %f\n", j, qr[j].dist);
+    //     for (i = 0; i < num; i++)
+    //     {
+    //         printf("%s ", qr[j].routeIDs[i]);
+    //     }
+    //     printf("\n");
+    // }
 }
 
 Queueroute popRoute()
 {
-    int min, i;
-    float min_dist = pow(10, 15);
-    Queueroute searchdata;
+    int min, i, n;
+    Queueroute searchdata, tmp;
 
-    for (i = 0; i < qr_tale; i++)
-    {
-        if (min_dist > qr[i].dist)
-        {
-            min_dist = qr[i].dist;
-            min = i;
-        }
-    }
-    searchdata = qr[min];
-    qr[min] = qr[qr_tale - 1];
+    searchdata = qr[0];
+
+    qr[0] = qr[qr_tale - 1];
     qr_tale--;
+    n = qr_tale;
+
+    while (n != 0)
+    {
+        i = (n - 1) / 2;
+        if (qr[n].dist < qr[i].dist)
+        {
+            tmp = qr[n];
+            qr[n] = qr[i];
+            qr[i] = tmp;
+        }
+        n = i;
+    }
 
     return searchdata;
 }
@@ -1452,10 +1507,14 @@ void searchK_route(char *from, char *to, int k_num)
             return;
         }
 
-        printf("No.1 shortest\ndistance: %f\nRoute: ", k_route[0].dist);
+        printf("No.1 shortest\ndistance: %f\nRoute\n", k_route[0].dist);
         for (j = 0; j < k_route[0].routecount; j++)
         {
-            printf("%s ", k_route[0].routeIDs[j]);
+            printf("%8s", k_route[0].routeIDs[j]);
+            if (j % 15 == 14)
+            {
+                printf("\n");
+            }
         }
         printf("\n");
 
@@ -1547,10 +1606,14 @@ void searchK_route(char *from, char *to, int k_num)
                 break;
             }
 
-            printf("No.%d shortest\ndistance: %f\nRoute: ", i + 1, k_route[i].dist);
+            printf("No.%d shortest\ndistance: %f\nRoute\n", i + 1, k_route[i].dist);
             for (j = 0; j < k_route[i].routecount; j++)
             {
-                printf("%s ", k_route[i].routeIDs[j]);
+                printf("%8s", k_route[i].routeIDs[j]);
+                if (j % 15 == 14)
+                {
+                    printf("\n");
+                }
             }
             printf("\n");
             tmpdist = k_route[i].dist;
@@ -1587,12 +1650,6 @@ void searchHighways()
         //printf("edge[%d] {%s, %s, %f} false\n", i, edges[i].node[0], edges[i].node[1], edges[i].cost);
         //printf("search {%s, %s} \n", edges[i].node[0], edges[i].node[1]);
         resetNodeStatus();
-
-        // from_index = getNodeindex(edges[i].node[0]);
-        // nodes[from_index].dist = 0;
-
-        // searchRoute(edges[i].node[0], edges[i].node[1]);
-        // q = popRoute();
 
         if (isRouteExist(edges[i].node[0], edges[i].node[1]) == FALSE)
         {
@@ -1693,7 +1750,7 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
             tmpy = 0;
             new_x = new_p[i].coo[0];
             new_y = new_p[i].coo[1];
-            new_p[i].identifer = i+1;
+            new_p[i].identifer = i + 1;
             for (j = 0; j < numline; j++)
             {
                 //easy to see
@@ -1757,7 +1814,7 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
                 }
             }
             printf("%f, %f, dist = %f\n", tmpx, tmpy, tmpd);
-            split_p[i].ID = i+1;
+            split_p[i].ID = i + 1;
             split_p[i].coo[0] = tmpx;
             split_p[i].coo[1] = tmpy;
         }
@@ -1767,57 +1824,67 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
         printf("Please check data input again\n\n");
     }
 }
-void writefile_inter(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]){
+void writefile_inter(char *filename, char *otherfilename, Point p[], Intersection inter[], Connection c[])
+{
     int i;
-	// create a FILE typed pointer
-	FILE *file_pointer,*file_pointer2; 
-	
-	// open the file "name_of_file.txt" for writing
-	file_pointer = fopen(filename, "w"); 
- 
-	// Write to the file
-    for(i = 0; i < N;i++){
-	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    // create a FILE typed pointer
+    FILE *file_pointer, *file_pointer2;
+
+    // open the file "name_of_file.txt" for writing
+    file_pointer = fopen(filename, "w");
+
+    // Write to the file
+    for (i = 0; i < N; i++)
+    {
+        fprintf(file_pointer, "%d %d %d\n", p[i].identifer, p[i].coo[0], p[i].coo[1]);
     }
-    for(i = 0; i < intersectionnumber;i++){
-	    fprintf(file_pointer, "C%d %f %f\n",inter[i].ID,inter[i].coo[0],inter[i].coo[1]);
+    for (i = 0; i < intersectionnumber; i++)
+    {
+        fprintf(file_pointer, "C%d %f %f\n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
     }
-    file_pointer2 = fopen(otherfilename, "w"); 
-    for(i = 0; i < M;i++){
-	    fprintf(file_pointer2, "%d %d\n",c[i].connect[0],c[i].connect[1]);
+    file_pointer2 = fopen(otherfilename, "w");
+    for (i = 0; i < M; i++)
+    {
+        fprintf(file_pointer2, "%d %d\n", c[i].connect[0], c[i].connect[1]);
     }
-	
-	// Close the file
-	fclose(file_pointer); 
-    fclose(file_pointer2); 
+
+    // Close the file
+    fclose(file_pointer);
+    fclose(file_pointer2);
 }
-void writefile_newp(char *filename,char *otherfilename,Point p[], Point new_p[],Intersection split_p[],Connection c[]){
+void writefile_newp(char *filename, char *otherfilename, Point p[], Point new_p[], Intersection split_p[], Connection c[])
+{
     int i;
-	// create a FILE typed pointer
-	FILE *file_pointer,*file_pointer2; 
-	
-	// open the file "name_of_file.txt" for writing
-	file_pointer = fopen(filename, "w"); 
- 
-	// Write to the file
-    for(i = 0; i < N;i++){
-	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    // create a FILE typed pointer
+    FILE *file_pointer, *file_pointer2;
+
+    // open the file "name_of_file.txt" for writing
+    file_pointer = fopen(filename, "w");
+
+    // Write to the file
+    for (i = 0; i < N; i++)
+    {
+        fprintf(file_pointer, "%d %d %d\n", p[i].identifer, p[i].coo[0], p[i].coo[1]);
     }
-    for(i = 0; i < P;i++){
-	    fprintf(file_pointer, "N%d %d %d\n",new_p[i].identifer,new_p[i].coo[0],new_p[i].coo[1]);
+    for (i = 0; i < P; i++)
+    {
+        fprintf(file_pointer, "N%d %d %d\n", new_p[i].identifer, new_p[i].coo[0], new_p[i].coo[1]);
     }
-    for(i = 0; i < P;i++){
-	    fprintf(file_pointer, "K%d %f %f\n",split_p[i].ID,split_p[i].coo[0],split_p[i].coo[1]);
+    for (i = 0; i < P; i++)
+    {
+        fprintf(file_pointer, "K%d %f %f\n", split_p[i].ID, split_p[i].coo[0], split_p[i].coo[1]);
     }
-    file_pointer2 = fopen(otherfilename, "w"); 
-    for(i = 0; i < M;i++){
-	    fprintf(file_pointer2, "%d %d\n",c[i].connect[0],c[i].connect[1]);
+    file_pointer2 = fopen(otherfilename, "w");
+    for (i = 0; i < M; i++)
+    {
+        fprintf(file_pointer2, "%d %d\n", c[i].connect[0], c[i].connect[1]);
     }
-    for(i = 0; i < P;i++){
-	    fprintf(file_pointer2, "N%d K%d\n",i+1,i+1);
+    for (i = 0; i < P; i++)
+    {
+        fprintf(file_pointer2, "N%d K%d\n", i + 1, i + 1);
     }
-	
-	// Close the file
-	fclose(file_pointer); 
-    fclose(file_pointer2); 
+
+    // Close the file
+    fclose(file_pointer);
+    fclose(file_pointer2);
 }
