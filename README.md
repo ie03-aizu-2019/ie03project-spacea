@@ -10,14 +10,12 @@
   1. Query for shortest paths  
   2. Optimal road construction to the new points  
   3. Highways detection 
-  0. Exit
   
 ### How to use 
-  ```
   1. Compile query.c with "-lm" option
   2. Run the program
   3. Follow the instructions in the program
-  ```
+
 **Follow the following tips to enter data**  
   ```
   N is number of locations.  
