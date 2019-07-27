@@ -6,13 +6,12 @@
  - python module: matplotlib
 
 
-### **We have three functions:**  
-  ```
+### We have three functions:
   1. Query for shortest paths  
   2. Optimal road construction to the new points  
   3. Highways detection 
   Use their respective numbers to select them ("q" is exit)  
-  ```
+  
 ### How to use 
   ```
   1. Compile query.c with "-lm" option
