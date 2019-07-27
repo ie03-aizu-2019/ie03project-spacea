@@ -92,9 +92,9 @@ void deter(Connection c[], Point p[], int numline);
 void mergesort(Intersection A[], int left, int right);
 void deleteSameIntersection(Intersection *);
 
-void writefile_inter(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]); //writing file
-void writefile_newp(char *filename,char *otherfilename,char *otherfilename2,Point p[], Point new_p[],Intersection split_p[],Connection c[]);
-void writefile_highway(char *filename,char *otherfilename,char *otherfilename2,Point p[], Intersection inter[],Connection c[]);
+void writefile_inter(char *filename, char *otherfilename, Point p[], Intersection inter[], Connection c[]); //writing file
+void writefile_newp(char *filename, char *otherfilename, char *otherfilename2, Point p[], Point new_p[], Intersection split_p[], Connection c[]);
+void writefile_highway(char *filename, char *otherfilename, char *otherfilename2, Point p[], Intersection inter[], Connection c[]);
 
 //-------make nodes and edges-----//
 void makeEdges();
@@ -504,7 +504,7 @@ int main()
             start = clock();
 
             newroad(c, p, new_p, P, M);
-            writefile_newp("../testdata/dwrite.txt","../testdata/dwrite2.txt","../testdata/dwrite3.txt",p,new_p,split_p,c);
+            writefile_newp("../testdata/dwrite.txt", "../testdata/dwrite2.txt", "../testdata/dwrite3.txt", p, new_p, split_p, c);
             system("python3 mat.py ../testdata/dwrite.txt ../testdata/dwrite2.txt ../testdata/dwrite3.txt 0");
             free(p);
             free(new_p);
@@ -631,7 +631,7 @@ int main()
 
             //search Highway
             searchHighways();
-            writefile_highway("../testdata/dwrite.txt","../testdata/dwrite2.txt","../testdata/dwrite3.txt",p,inter,c);
+            writefile_highway("../testdata/dwrite.txt", "../testdata/dwrite2.txt", "../testdata/dwrite3.txt", p, inter, c);
             system("python3 mat.py ../testdata/dwrite.txt ../testdata/dwrite2.txt ../testdata/dwrite3.txt 1");
             free(p);
             free(c);
@@ -1424,7 +1424,7 @@ Queueroute popRoute()
 
     searchdata = qr[0];
 
-    qr[0] = qr[qr_tale - 1];
+    qr[0] = qr[qr_tale-1];
     qr_tale--;
     n = qr_tale;
 
@@ -1435,8 +1435,7 @@ Queueroute popRoute()
         {
             tmp = qr[n];
             qr[n] = qr[i];
-            qr[i] = tmp;            free(nodes);
-            free(edges);
+            qr[i] = tmp;
         }
         n = i;
     }
@@ -1638,7 +1637,7 @@ void searchHighways()
 {
     int i, from_index, highwaynumber = 0;
     Queueroute q;
-    
+
     qr = (Queueroute *)malloc(sizeof(Queueroute) * 10);
     if (qr == NULL)
     {
@@ -1665,11 +1664,11 @@ void searchHighways()
 
         // searchRoute(edges[i].node[0], edges[i].node[1]);
         // q = popRoute();
-    if (qr == NULL)
-    {
-        printf("Error 9: Coundn't make qd array\n");
-        exit(9);
-    }
+        if (qr == NULL)
+        {
+            printf("Error 9: Coundn't make qd array\n");
+            exit(9);
+        }
         if (isRouteExist(edges[i].node[0], edges[i].node[1]) == FALSE)
         {
             printf("Highway[%d](%s , %s)\n", highwaynumber, edges[i].node[0], edges[i].node[1]);
@@ -1678,12 +1677,9 @@ void searchHighways()
         }
 
         number_of_highway = highwaynumber;
-        
+
         edges[i].is_exist = TRUE;
     }
-
-
-
 
     free(qr);
 }
@@ -1878,17 +1874,19 @@ void writefile_inter(char *filename, char *otherfilename, Point p[], Intersectio
     fclose(file_pointer);
     fclose(file_pointer2);
 }
-void writefile_newp(char *filename,char *otherfilename,char *otherfilename2,Point p[], Point new_p[],Intersection split_p[],Connection c[]){
+void writefile_newp(char *filename, char *otherfilename, char *otherfilename2, Point p[], Point new_p[], Intersection split_p[], Connection c[])
+{
     int i;
-	// create a FILE typed pointer
-	FILE *file_pointer,*file_pointer2, *file_pointer3; 
-	
-	// open the file "name_of_file.txt" for writing
-	file_pointer = fopen(filename, "w"); 
- 
-	// Write to the file
-    for(i = 0; i < N;i++){
-	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    // create a FILE typed pointer
+    FILE *file_pointer, *file_pointer2, *file_pointer3;
+
+    // open the file "name_of_file.txt" for writing
+    file_pointer = fopen(filename, "w");
+
+    // Write to the file
+    for (i = 0; i < N; i++)
+    {
+        fprintf(file_pointer, "%d %d %d\n", p[i].identifer, p[i].coo[0], p[i].coo[1]);
     }
     for (i = 0; i < P; i++)
     {
@@ -1903,45 +1901,51 @@ void writefile_newp(char *filename,char *otherfilename,char *otherfilename2,Poin
     {
         fprintf(file_pointer2, "%d %d\n", c[i].connect[0], c[i].connect[1]);
     }
-    file_pointer3 = fopen(otherfilename2, "w"); 
-    for(i = 0; i < P;i++){
-	    fprintf(file_pointer3, "N%d K%d\n",i+1,i+1);
-        printf("N%d K%d\n",i+1,i+1);
+    file_pointer3 = fopen(otherfilename2, "w");
+    for (i = 0; i < P; i++)
+    {
+        fprintf(file_pointer3, "N%d K%d\n", i + 1, i + 1);
+        printf("N%d K%d\n", i + 1, i + 1);
     }
-	
-	// Close the file
-	fclose(file_pointer); 
-    fclose(file_pointer2); 
+
+    // Close the file
+    fclose(file_pointer);
+    fclose(file_pointer2);
     fclose(file_pointer3);
 }
-void writefile_highway(char *filename,char *otherfilename,char *otherfilename2,Point p[], Intersection inter[],Connection c[]){
+void writefile_highway(char *filename, char *otherfilename, char *otherfilename2, Point p[], Intersection inter[], Connection c[])
+{
     int i;
-	// create a FILE typed pointer
-	FILE *file_pointer,*file_pointer2,*file_pointer3; 
-	
-	// open the file "name_of_file.txt" for writing
-	file_pointer = fopen(filename, "w"); 
- 
-	// Write to the file
-    for(i = 0; i < N;i++){
-	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    // create a FILE typed pointer
+    FILE *file_pointer, *file_pointer2, *file_pointer3;
+
+    // open the file "name_of_file.txt" for writing
+    file_pointer = fopen(filename, "w");
+
+    // Write to the file
+    for (i = 0; i < N; i++)
+    {
+        fprintf(file_pointer, "%d %d %d\n", p[i].identifer, p[i].coo[0], p[i].coo[1]);
     }
-    for(i = 0; i < intersectionnumber;i++){
-	    fprintf(file_pointer, "C%d %f %f\n",inter[i].ID,inter[i].coo[0],inter[i].coo[1]);
+    for (i = 0; i < intersectionnumber; i++)
+    {
+        fprintf(file_pointer, "C%d %f %f\n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
     }
-    file_pointer2 = fopen(otherfilename, "w"); 
-    for(i = 0; i < M;i++){
-	    fprintf(file_pointer2, "%d %d\n",c[i].connect[0],c[i].connect[1]);
+    file_pointer2 = fopen(otherfilename, "w");
+    for (i = 0; i < M; i++)
+    {
+        fprintf(file_pointer2, "%d %d\n", c[i].connect[0], c[i].connect[1]);
     }
-    file_pointer3 = fopen(otherfilename2, "w"); 
-    for(i = 0; i < number_of_highway;i++){
-	    fprintf(file_pointer3, "%s %s\n",edges[tmp_highway[i]].node[0], edges[tmp_highway[i]].node[1]);
+    file_pointer3 = fopen(otherfilename2, "w");
+    for (i = 0; i < number_of_highway; i++)
+    {
+        fprintf(file_pointer3, "%s %s\n", edges[tmp_highway[i]].node[0], edges[tmp_highway[i]].node[1]);
     }
-	    // for(int j = 0; j < number_of_highway; j++){
-        //     printf("tmp Highway[%d](%s , %s)\n", j, edges[tmp_highway[j]].node[0], edges[tmp_highway[j]].node[1]);
-        // } 
-	// Close the file
-	fclose(file_pointer); 
-    fclose(file_pointer2); 
-    fclose(file_pointer3); 
+    // for(int j = 0; j < number_of_highway; j++){
+    //     printf("tmp Highway[%d](%s , %s)\n", j, edges[tmp_highway[j]].node[0], edges[tmp_highway[j]].node[1]);
+    // }
+    // Close the file
+    fclose(file_pointer);
+    fclose(file_pointer2);
+    fclose(file_pointer3);
 }
