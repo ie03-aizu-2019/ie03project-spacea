@@ -52,8 +52,60 @@
   s_q d_q k_q  
   ```
   
-**Then you will get you answer**  
-
+#### Example 1 (k-th shortest paths)
+##### Data
+  ```
+  6 5 0 5
+  0 0
+  2 5
+  4 7
+  5 5
+  7 1
+  9 5
+  1 4
+  1 6
+  2 5
+  3 5
+  4 6
+  1 4 5 
+  C1 C3 10
+  ```
+#### Example 2 (new road constructions suggestion)
+##### Data
+  ```
+  6 5 4 0
+  0 0
+  2 5
+  4 7
+  5 5
+  7 1
+  9 5
+  1 4
+  1 6
+  2 5
+  3 5
+  4 6
+  5 1
+  11 5
+  5 4
+  3 6
+  ```
+#### Example 3 (Highways detection)
+##### Data
+  ```
+  6 5 0 0
+  0 0
+  2 5
+  4 7
+  5 5
+  7 1
+  9 5
+  1 4
+  1 6
+  2 5
+  3 5
+  4 6
+  ```
 ------
 ### upgrade
 #### 2019-7-10
