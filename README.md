@@ -10,7 +10,7 @@
   1. Query for shortest paths  
   2. Optimal road construction to the new points  
   3. Highways detection 
-  (Use their respective numbers to select them ("q" is exit)  )
+  0. Exit
   
 ### How to use 
   ```
