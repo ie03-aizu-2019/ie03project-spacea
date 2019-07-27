@@ -1,7 +1,10 @@
 # IE03 Integarted Exercise for software I  
 ## Welcome to SpaceA group
 
-**_***Things you need***_**
+**_ Things you need _**
+ - gcc compiler
+ - python3
+ - python module: matplotlib
 ### How to use
 **We have three functions:**  
   ```
