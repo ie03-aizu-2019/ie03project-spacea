@@ -1,13 +1,13 @@
 # IE03 Integarted Exercise for software I  
-## Welcome to spacea group
+## Welcome to SpaceA group
 
-
+**_Things you need_**
 ### How to use
 **We have three functions:**  
   ```
-  Shortest path  
-  optimal road construction to the new points  
-  detecttion  
+  - Query for shortest paths  
+  - Optimal road construction to the new points  
+  - Highways detection 
   Use their respective numbers to select them ("q" is exit)  
   ```
   
