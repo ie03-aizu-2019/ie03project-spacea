@@ -1,19 +1,24 @@
 # IE03 Integarted Exercise for software I  
 ## Welcome to SpaceA group
-
-**_ Things you need _**
+### ** Things you need **
  - gcc compiler
  - python3
  - python module: matplotlib
-### How to use
-**We have three functions:**  
+
+
+###**We have three functions:**  
   ```
-  - Query for shortest paths  
-  - Optimal road construction to the new points  
-  - Highways detection 
+  1. Query for shortest paths  
+  2. Optimal road construction to the new points  
+  3. Highways detection 
   Use their respective numbers to select them ("q" is exit)  
   ```
-  
+### How to use 
+  ```
+  1. Compile query.c with "-lm" option
+  2. Run the program
+  3. Follow the instructions in the program
+  ```
 **Follow the following tips to enter data**  
   ```
   N is number of locations.  
