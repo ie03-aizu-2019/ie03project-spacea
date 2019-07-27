@@ -13,7 +13,13 @@
   
 ### How to use 
   1. Compile query.c with "-lm" option
+    ```
+    gcc query.c -o query -lm
+    ```
   2. Run the program
+    ```
+    ./query
+    ```
   3. Follow the instructions in the program
 
 **Follow the following tips to enter data**  
