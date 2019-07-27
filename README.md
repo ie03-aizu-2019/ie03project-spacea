@@ -12,11 +12,11 @@
   3. Highways detection 
   
 ### How to use 
-  1. Compile query.c with "-lm" option
+  1. Compile query.c with "-lm" option:
     ```
     gcc query.c -o query -lm
     ```
-  2. Run the program
+  2. Run the program:
     ```
     ./query
     ```
