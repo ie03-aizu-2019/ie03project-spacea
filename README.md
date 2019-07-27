@@ -6,7 +6,7 @@
  - python module: matplotlib
 
 
-###**We have three functions:**  
+### **We have three functions:**  
   ```
   1. Query for shortest paths  
   2. Optimal road construction to the new points  
