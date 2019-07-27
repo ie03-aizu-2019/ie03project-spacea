@@ -15,7 +15,7 @@ with open(coordinates) as f:
 
 fig, ax = plt.subplots()
 for item in d:
-    # print("{}:{},{}".format(item,d[item][0],d[item][1]))
+    print("{}:{},{}".format(item,d[item][0],d[item][1]))
     ax.scatter(d[item][0],d[item][1])
     ax.annotate(str(item), xy=(d[item][0],d[item][1]))
 

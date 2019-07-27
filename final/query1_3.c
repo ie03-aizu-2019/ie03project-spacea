@@ -92,7 +92,9 @@ void deter(Connection c[], Point p[], int numline);
 void mergesort(Intersection A[], int left, int right);
 void deleteSameIntersection(Intersection *);
 
-void Writefile(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]); //writing file
+void writefile_inter(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]); //writing file
+void writefile_newp(char *filename,char *otherfilename,Point p[], Point new_p[],Intersection split_p[],Connection c[]);
+
 //-------make nodes and edges-----//
 void makeEdges();
 void sortAlign(Align *, int, int);
@@ -129,6 +131,7 @@ void searchHighways();
 int isRouteExist(char *, char *);
 //---------------------------------//
 Point *p, *new_p;
+Intersection *split_p;
 Connection *c;
 Intersection *inter;
 Intersection *tmp_inter; //data memory used for merge sort
@@ -326,7 +329,7 @@ int main()
 
             //calc intersection
             deter(c, p, M);
-            Writefile("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
+            writefile_inter("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
             end = clock();
             printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
             //make graph
@@ -402,7 +405,8 @@ int main()
                     printf("Error 2: Coundn't make inter array\n");
                     exit(2);
                 }
-                new_p = (Point *)malloc(sizeof(Point) * P);
+                new_p = (Point *)malloc(sizeof(Point) * P);        
+                split_p = (Intersection *)malloc(P*sizeof(Intersection));
                 if (new_p == NULL)
                 {
                     printf("Error 4: Coundn't make new_p array\n");
@@ -495,8 +499,10 @@ int main()
             start = clock();
 
             newroad(c, p, new_p, P, M);
+            writefile_newp("../testdata/mat.txt","../testdata/mat2.txt",p,new_p,split_p,c);
             free(p);
             free(new_p);
+            free(split_p);
             free(c);
             free(inter);
             free(nodes);
@@ -615,7 +621,7 @@ int main()
 
             //calc intersection
             deter(c, p, M);
-            Writefile("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
+            writefile_inter("../testdata/dwrite.txt","../testdata/dwrite2.txt",p,inter,c);
             //make graph
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
             makeEdges();
@@ -1674,7 +1680,6 @@ int isRouteExist(char *from, char *to)
 void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numline)
 {
     int combi, i, j, m, n;
-    int n_p = 10; //max number of point on a segment
 
     float dist1, dist2, tmpd = 0, tmpd1, tmpd2, tmpx = 0, tmpy = 0;
     float det, s, t;
@@ -1688,14 +1693,15 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
             tmpy = 0;
             new_x = new_p[i].coo[0];
             new_y = new_p[i].coo[1];
+            new_p[i].identifer = i+1;
             for (j = 0; j < numline; j++)
             {
                 //easy to see
                 int xp1, yp1, xq1, yq1;
-                xp1 = p[c[i].connect[0] - 1].coo[0];
-                yp1 = p[c[i].connect[0] - 1].coo[1];
-                xq1 = p[c[i].connect[1] - 1].coo[0];
-                yq1 = p[c[i].connect[1] - 1].coo[1];
+                xp1 = p[c[j].connect[0] - 1].coo[0];
+                yp1 = p[c[j].connect[0] - 1].coo[1];
+                xq1 = p[c[j].connect[1] - 1].coo[0];
+                yq1 = p[c[j].connect[1] - 1].coo[1];
 
                 t = -(((xp1 - new_x) * (xq1 - xp1) + (yp1 - new_y) * (yq1 - yp1)) / (pow(xq1 - xp1, 2) + pow(yq1 - yp1, 2)));
                 if (t >= 0 && t <= 1)
@@ -1751,6 +1757,9 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
                 }
             }
             printf("%f, %f, dist = %f\n", tmpx, tmpy, tmpd);
+            split_p[i].ID = i+1;
+            split_p[i].coo[0] = tmpx;
+            split_p[i].coo[1] = tmpy;
         }
     }
     else
@@ -1758,7 +1767,7 @@ void newroad(Connection c[], Point p[], Point new_p[], int num_new_p, int numlin
         printf("Please check data input again\n\n");
     }
 }
-void Writefile(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]){
+void writefile_inter(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]){
     int i;
 	// create a FILE typed pointer
 	FILE *file_pointer,*file_pointer2; 
@@ -1776,6 +1785,36 @@ void Writefile(char *filename,char *otherfilename,Point p[], Intersection inter[
     file_pointer2 = fopen(otherfilename, "w"); 
     for(i = 0; i < M;i++){
 	    fprintf(file_pointer2, "%d %d\n",c[i].connect[0],c[i].connect[1]);
+    }
+	
+	// Close the file
+	fclose(file_pointer); 
+    fclose(file_pointer2); 
+}
+void writefile_newp(char *filename,char *otherfilename,Point p[], Point new_p[],Intersection split_p[],Connection c[]){
+    int i;
+	// create a FILE typed pointer
+	FILE *file_pointer,*file_pointer2; 
+	
+	// open the file "name_of_file.txt" for writing
+	file_pointer = fopen(filename, "w"); 
+ 
+	// Write to the file
+    for(i = 0; i < N;i++){
+	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    }
+    for(i = 0; i < P;i++){
+	    fprintf(file_pointer, "N%d %d %d\n",new_p[i].identifer,new_p[i].coo[0],new_p[i].coo[1]);
+    }
+    for(i = 0; i < P;i++){
+	    fprintf(file_pointer, "K%d %f %f\n",split_p[i].ID,split_p[i].coo[0],split_p[i].coo[1]);
+    }
+    file_pointer2 = fopen(otherfilename, "w"); 
+    for(i = 0; i < M;i++){
+	    fprintf(file_pointer2, "%d %d\n",c[i].connect[0],c[i].connect[1]);
+    }
+    for(i = 0; i < P;i++){
+	    fprintf(file_pointer2, "N%d K%d\n",i+1,i+1);
     }
 	
 	// Close the file
