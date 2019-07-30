@@ -345,7 +345,7 @@ int main()
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
             makeEdges();
             printf("Drawing graph...\n");
-            // system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt");
+            system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt");
 
             //search route
             if (intype == 1)
@@ -369,7 +369,6 @@ int main()
                     searchK_route(str_from, str_to, k_short);
                 }
             }
-            system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt");
             free(p);
             free(c);
             free(inter);
