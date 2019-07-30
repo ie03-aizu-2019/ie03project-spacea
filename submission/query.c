@@ -369,6 +369,7 @@ int main()
                     searchK_route(str_from, str_to, k_short);
                 }
             }
+            system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt");
             free(p);
             free(c);
             free(inter);
