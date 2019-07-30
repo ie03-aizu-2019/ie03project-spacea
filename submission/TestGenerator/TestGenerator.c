@@ -120,18 +120,28 @@ int main()
     }
     fprintf(f, "%d ", M);
 
-    if (N <= 447)
+    if (MAX_COO <= 447)
     {
         temp2 = temp - N;
     }
+    else if (MAX_COO == 448)
+    {
+        temp2 = 200704 - N;
+        if (temp2 > 1000)
+        {
+            temp2 = 1000;
+        }
+    }
     else
     {
-        temp2 = 100;
+        temp2 = 1000;
     }
+
     if (temp2 < 0)
     {
         temp2 = 0;
     }
+
     while (1)
     {
         printf("Write number of P (P <= %d)\n", temp2);
@@ -169,8 +179,8 @@ int main()
     i = 0;
     while (i < N)
     {
-        X = rand() % MAX_COO;
-        Y = rand() % MAX_COO;
+        X = 0;
+        Y = (rand() * rand()) % MAX_COO;
 
         if (searchVal(hashtable, X, Y) == FALSE)
         {
@@ -228,8 +238,8 @@ int main()
     i = 0;
     while (i < M)
     {
-        X = 1 + rand() % N;
-        for (Y = 1 + rand() % N; Y == X; Y = 1 + rand() % N)
+        X = 1 + (rand() * rand()) % N;
+        for (Y = 1 + (rand() * rand()) % N; Y == X; Y = 1 + (rand() * rand()) % N)
         {
         }
 
@@ -278,8 +288,8 @@ int main()
     freeHashTable(hashtable2);
 
     printf("done\n");
-    printf("Checking number of intersection\n");
-    deter(c, p, M);
+    // printf("Checking number of intersection\n");
+    // deter(c, p, M);
     printf("Number of intersection is %d\n", intersectionnumber);
     if (P != 0)
     {
@@ -287,8 +297,8 @@ int main()
         i = 0;
         while (i < P)
         {
-            X = rand() % MAX_COO;
-            Y = rand() % MAX_COO;
+            X = (rand() * rand()) % MAX_COO;
+            Y = (rand() * rand()) % MAX_COO;
 
             if (searchVal(hashtable, X, Y) == FALSE)
             {
@@ -357,8 +367,8 @@ int main()
                 exit(0);
             }
 
-            X = 1 + rand() % (N + intersectionnumber - 1);
-            for (Y = 1 + rand() % (N + intersectionnumber - 1); Y == X; Y = 1 + rand() % (N + intersectionnumber - 1))
+            X = 1 + (rand() * rand()) % (N + intersectionnumber - 1);
+            for (Y = 1 + (rand() * rand()) % (N + intersectionnumber - 1); Y == X; Y = 1 + (rand() * rand()) % (N + intersectionnumber - 1))
             {
             }
 

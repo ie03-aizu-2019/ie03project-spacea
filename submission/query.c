@@ -12,7 +12,7 @@
 #define WHITE 0
 #define BLACK 1
 #define MAX_INTERSECTION 3000000
-#define MAX_ALIGNLIST 10000
+#define MAX_ALIGNLIST 200000
 #define TRUE 1
 #define FALSE -1
 
@@ -92,9 +92,9 @@ void deter(Connection c[], Point p[], int numline);
 void mergesort(Intersection A[], int left, int right);
 void deleteSameIntersection(Intersection *);
 
-void writefile_inter(char *filename,char *otherfilename,Point p[], Intersection inter[],Connection c[]); //writing file
-void writefile_newp(char *filename,char *otherfilename,char *otherfilename2,Point p[], Point new_p[],Intersection split_p[],Connection c[]);
-void writefile_highway(char *filename,char *otherfilename,char *otherfilename2,Point p[], Intersection inter[],Connection c[]);
+void writefile_inter(char *filename, char *otherfilename, Point p[], Intersection inter[], Connection c[]); //writing file
+void writefile_newp(char *filename, char *otherfilename, char *otherfilename2, Point p[], Point new_p[], Intersection split_p[], Connection c[]);
+void writefile_highway(char *filename, char *otherfilename, char *otherfilename2, Point p[], Intersection inter[], Connection c[]);
 
 //-------make nodes and edges-----//
 void makeEdges();
@@ -203,8 +203,11 @@ int main()
 
         printf("\n(Please refer to https://github.com/ie03-aizu-2019/ie03project-spacea\nfor how to use and more detail.)\n\n");
         printf("Option selection:");
-        if(scanf("%d", &option)){}
-        else{
+        if (scanf("%d", &option))
+        {
+        }
+        else
+        {
             printf("\nPlease input valid option.\n");
             continue;
         }
@@ -216,7 +219,10 @@ int main()
             printf("Input data by hand or file?\n");
             printf("1. File input\n");
             printf("2. Hand input\n:");
-            if(!scanf("%d", &intype)){continue;};
+            if (!scanf("%d", &intype))
+            {
+                continue;
+            };
             if (intype == 1)
             {
                 printf("Enter the file name:");
@@ -269,7 +275,10 @@ int main()
             }
             else if (intype == 2)
             {
-                if(!scanf("%d %d %d %d", &N, &M, &P, &Q)){continue;};
+                if (!scanf("%d %d %d %d", &N, &M, &P, &Q))
+                {
+                    continue;
+                };
                 //make array
                 p = (Point *)malloc(sizeof(Point) * N);
                 if (p == NULL)
@@ -302,30 +311,41 @@ int main()
                 for (i = 0; i < N; i++)
                 {
                     // printf("Coordinate number %d: ",i+1);
-                    if(!scanf("%d %d", &p[i].coo[0], &p[i].coo[1])){continue;};
+                    if (!scanf("%d %d", &p[i].coo[0], &p[i].coo[1]))
+                    {
+                        continue;
+                    };
                     p[i].identifer = i + 1;
                 }
 
                 for (i = 0; i < M; i++)
                 {
                     // printf("Line number %d: ",i+1);
-                    if(!scanf("%d %d", &c[i].connect[0], &c[i].connect[1])){continue;};
+                    if (!scanf("%d %d", &c[i].connect[0], &c[i].connect[1]))
+                    {
+                        continue;
+                    };
                 }
-            }else{
+            }
+            else
+            {
                 continue;
             }
             start = clock();
 
             //calc intersection
+
+            printf("Calculate intersection...\n");
             deter(c, p, M);
             writefile_inter("./tmp/dwrite.txt", "./tmp/dwrite2.txt", p, inter, c);
             // end = clock();
             // printf("Process time %.8f seconds\n", (double)(end - start) / CLOCKS_PER_SEC);
             //make graph
-            printf("Making graph...");
+            printf("Making graph...\n");
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
             makeEdges();
-            system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt");
+            printf("Drawing graph...\n");
+            // system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt");
 
             //search route
             if (intype == 1)
@@ -342,7 +362,10 @@ int main()
                 for (i = 0; i < Q; i++)
                 {
                     // printf("[start point] [destination] [number of route]: ");
-                    if(!scanf("%s %s %d", str_from, str_to, &k_short)){continue;};
+                    if (!scanf("%s %s %d", str_from, str_to, &k_short))
+                    {
+                        continue;
+                    };
                     searchK_route(str_from, str_to, k_short);
                 }
             }
@@ -362,7 +385,10 @@ int main()
             printf("Input data by hand or file?\n");
             printf("1. File input\n");
             printf("2. Hand input\n:");
-            if(!scanf("%d", &intype)){continue;};
+            if (!scanf("%d", &intype))
+            {
+                continue;
+            };
             //Segments *segments;
             // printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
             if (intype == 1)
@@ -424,7 +450,10 @@ int main()
             }
             else if (intype == 2)
             {
-                if(!scanf("%d %d %d %d", &N, &M, &P, &Q)){continue;};
+                if (!scanf("%d %d %d %d", &N, &M, &P, &Q))
+                {
+                    continue;
+                };
                 // //make array
                 p = (Point *)malloc(sizeof(Point) * N);
                 if (p == NULL)
@@ -454,27 +483,40 @@ int main()
                 for (i = 0; i < N; i++)
                 {
                     printf("Coordinate number %d: ", i + 1);
-                    if(!scanf("%d %d", &p[i].coo[0], &p[i].coo[1])){continue;};
+                    if (!scanf("%d %d", &p[i].coo[0], &p[i].coo[1]))
+                    {
+                        continue;
+                    };
                     p[i].identifer = i + 1;
                 }
 
                 for (i = 0; i < M; i++)
                 {
                     printf("Line number %d: ", i + 1);
-                    if(!scanf("%d %d", &c[i].connect[0], &c[i].connect[1])){continue;};
+                    if (!scanf("%d %d", &c[i].connect[0], &c[i].connect[1]))
+                    {
+                        continue;
+                    };
                 }
                 for (i = 0; i < P; i++)
                 {
                     printf("New coordinate number %d: ", i + 1);
-                    if(!scanf("%d %d", &new_p[i].coo[0], &new_p[i].coo[1])){continue;};
+                    if (!scanf("%d %d", &new_p[i].coo[0], &new_p[i].coo[1]))
+                    {
+                        continue;
+                    };
                 }
-            }else{
+            }
+            else
+            {
                 continue;
             }
             start = clock();
 
+            printf("Making new load...\n");
             newroad(c, p, new_p, P, M);
-            writefile_newp("./tmp/dwrite.txt","./tmp/dwrite2.txt","./tmp/dwrite3.txt",p,new_p,split_p,c);
+            writefile_newp("./tmp/dwrite.txt", "./tmp/dwrite2.txt", "./tmp/dwrite3.txt", p, new_p, split_p, c);
+            printf("Drawing graph...\n");
             system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt ./tmp/dwrite3.txt 0");
             free(p);
             free(new_p);
@@ -490,7 +532,10 @@ int main()
             printf("Input data by hand or file?\n");
             printf("1. File input\n");
             printf("2. Hand input\n:");
-            if(!scanf("%d", &intype)){continue;};
+            if (!scanf("%d", &intype))
+            {
+                continue;
+            };
             //Segments *segments;
             // printf("[number of point] [number of line] [number of new point] [number of queries for asking shortest routes]:\n");
             if (intype == 1)
@@ -546,7 +591,10 @@ int main()
             }
             else if (intype == 2)
             {
-                if(!scanf("%d %d %d %d", &N, &M, &P, &Q)){continue;};
+                if (!scanf("%d %d %d %d", &N, &M, &P, &Q))
+                {
+                    continue;
+                };
 
                 //make array
                 p = (Point *)malloc(sizeof(Point) * N);
@@ -580,29 +628,42 @@ int main()
                 for (i = 0; i < N; i++)
                 {
                     printf("Coordinate number %d: ", i + 1);
-                    if(!scanf("%d %d", &p[i].coo[0], &p[i].coo[1])){continue;};
+                    if (!scanf("%d %d", &p[i].coo[0], &p[i].coo[1]))
+                    {
+                        continue;
+                    };
                     p[i].identifer = i + 1;
                 }
 
                 for (i = 0; i < M; i++)
                 {
                     printf("Line number %d: ", i + 1);
-                    if(!scanf("%d %d", &c[i].connect[0], &c[i].connect[1])){continue;};
+                    if (!scanf("%d %d", &c[i].connect[0], &c[i].connect[1]))
+                    {
+                        continue;
+                    };
                 }
-            }else{
+            }
+            else
+            {
                 continue;
             }
             start = clock();
 
             //calc intersection
+            printf("Calculate intersection...\n");
             deter(c, p, M);
             //make graph
+            printf("Making graph...\n");
             makeGraph(p, inter, intersectionnumber, N); // (point, intersection, num_intersection, num_point)
             makeEdges();
 
             //search Highway
+            printf("Search highways...");
             searchHighways();
-            writefile_highway("./tmp/dwrite.txt","./tmp/dwrite2.txt","./tmp/dwrite3.txt",p,inter,c);
+            writefile_highway("./tmp/dwrite.txt", "./tmp/dwrite2.txt", "./tmp/dwrite3.txt", p, inter, c);
+
+            printf("Drawing graph...\n");
             system("python3 mat.py ./tmp/dwrite.txt ./tmp/dwrite2.txt ./tmp/dwrite3.txt 1");
             free(p);
             free(c);
@@ -701,7 +762,7 @@ void deter(Connection c[], Point p[], int numline)
     }
     else
     {
-        printf("%d,NA3\n", k);
+        printf("Not found the intersection\n");
         intersectionnumber = 0;
     }
 }
@@ -875,7 +936,6 @@ void makeEdges()
 
         sortAlign(&List, 0, alignnumber - 1);
 
-
         //make edges
         for (j = 0; j < alignnumber - 1; j++)
         {
@@ -920,12 +980,11 @@ void makeEdges()
             edges[edgeindex].is_exist = TRUE;
             addLinkedList(tmpstr[0], tmpstr[1], edgeindex);
             addLinkedList(tmpstr[1], tmpstr[0], edgeindex);
-            //printf("{%s, %s, %f}\n", edges[edgeindex].node[0], edges[edgeindex].node[1], edges[edgeindex].cost);
+            // printf("{%s, %s, %f}\n", edges[edgeindex].node[0], edges[edgeindex].node[1], edges[edgeindex].cost);
             edgeindex++;
         }
     }
     edgenumber = edgeindex;
-
 }
 
 void sortAlign(Align *list, int left, int right)
@@ -935,7 +994,6 @@ void sortAlign(Align *list, int left, int right)
     int temp_p;
     float temp_d;
     float pivot;
-
 
     pivot = list->dist_list[(left + right) / 2];
     //printf("left = %d, right = %d, piv %f\n", left, right, pivot);
@@ -1101,7 +1159,7 @@ void searchRoute(char *from, char *to)
 
     pushDist(nodes[from_index].ID, nodes[from_index].dist);
 
-    //printf("search %s %s\n", from, to);
+    printf("search %s %s\n", from, to);
 
     while (qd_tale != 0)
     {
@@ -1533,7 +1591,7 @@ void searchHighways()
 {
     int i, from_index, highwaynumber = 0;
     Queueroute q;
-    
+
     qr = (Queueroute *)malloc(sizeof(Queueroute) * 10);
     if (qr == NULL)
     {
@@ -1553,11 +1611,11 @@ void searchHighways()
         edges[i].is_exist = FALSE;
         resetNodeStatus();
 
-    if (qr == NULL)
-    {
-        printf("Error 9: Coundn't make qd array\n");
-        exit(9);
-    }
+        if (qr == NULL)
+        {
+            printf("Error 9: Coundn't make qd array\n");
+            exit(9);
+        }
         if (isRouteExist(edges[i].node[0], edges[i].node[1]) == FALSE)
         {
             printf("Highway[%d](%s , %s)\n", highwaynumber, edges[i].node[0], edges[i].node[1]);
@@ -1566,12 +1624,9 @@ void searchHighways()
         }
 
         number_of_highway = highwaynumber;
-        
+
         edges[i].is_exist = TRUE;
     }
-
-
-
 
     free(qr);
 }
@@ -1766,17 +1821,19 @@ void writefile_inter(char *filename, char *otherfilename, Point p[], Intersectio
     fclose(file_pointer);
     fclose(file_pointer2);
 }
-void writefile_newp(char *filename,char *otherfilename,char *otherfilename2,Point p[], Point new_p[],Intersection split_p[],Connection c[]){
+void writefile_newp(char *filename, char *otherfilename, char *otherfilename2, Point p[], Point new_p[], Intersection split_p[], Connection c[])
+{
     int i;
-	// create a FILE typed pointer
-	FILE *file_pointer,*file_pointer2, *file_pointer3; 
-	
-	// open the file "name_of_file.txt" for writing
-	file_pointer = fopen(filename, "w"); 
- 
-	// Write to the file
-    for(i = 0; i < N;i++){
-	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    // create a FILE typed pointer
+    FILE *file_pointer, *file_pointer2, *file_pointer3;
+
+    // open the file "name_of_file.txt" for writing
+    file_pointer = fopen(filename, "w");
+
+    // Write to the file
+    for (i = 0; i < N; i++)
+    {
+        fprintf(file_pointer, "%d %d %d\n", p[i].identifer, p[i].coo[0], p[i].coo[1]);
     }
     for (i = 0; i < P; i++)
     {
@@ -1791,45 +1848,51 @@ void writefile_newp(char *filename,char *otherfilename,char *otherfilename2,Poin
     {
         fprintf(file_pointer2, "%d %d\n", c[i].connect[0], c[i].connect[1]);
     }
-    file_pointer3 = fopen(otherfilename2, "w"); 
-    for(i = 0; i < P;i++){
-	    fprintf(file_pointer3, "N%d K%d\n",i+1,i+1);
-        printf("N%d K%d\n",i+1,i+1);
+    file_pointer3 = fopen(otherfilename2, "w");
+    for (i = 0; i < P; i++)
+    {
+        fprintf(file_pointer3, "N%d K%d\n", i + 1, i + 1);
+        // printf("N%d K%d\n", i + 1, i + 1);
     }
-	
-	// Close the file
-	fclose(file_pointer); 
-    fclose(file_pointer2); 
+
+    // Close the file
+    fclose(file_pointer);
+    fclose(file_pointer2);
     fclose(file_pointer3);
 }
-void writefile_highway(char *filename,char *otherfilename,char *otherfilename2,Point p[], Intersection inter[],Connection c[]){
+void writefile_highway(char *filename, char *otherfilename, char *otherfilename2, Point p[], Intersection inter[], Connection c[])
+{
     int i;
-	// create a FILE typed pointer
-	FILE *file_pointer,*file_pointer2,*file_pointer3; 
-	
-	// open the file "name_of_file.txt" for writing
-	file_pointer = fopen(filename, "w"); 
- 
-	// Write to the file
-    for(i = 0; i < N;i++){
-	    fprintf(file_pointer, "%d %d %d\n",p[i].identifer,p[i].coo[0],p[i].coo[1]);
+    // create a FILE typed pointer
+    FILE *file_pointer, *file_pointer2, *file_pointer3;
+
+    // open the file "name_of_file.txt" for writing
+    file_pointer = fopen(filename, "w");
+
+    // Write to the file
+    for (i = 0; i < N; i++)
+    {
+        fprintf(file_pointer, "%d %d %d\n", p[i].identifer, p[i].coo[0], p[i].coo[1]);
     }
-    for(i = 0; i < intersectionnumber;i++){
-	    fprintf(file_pointer, "C%d %f %f\n",inter[i].ID,inter[i].coo[0],inter[i].coo[1]);
+    for (i = 0; i < intersectionnumber; i++)
+    {
+        fprintf(file_pointer, "C%d %f %f\n", inter[i].ID, inter[i].coo[0], inter[i].coo[1]);
     }
-    file_pointer2 = fopen(otherfilename, "w"); 
-    for(i = 0; i < M;i++){
-	    fprintf(file_pointer2, "%d %d\n",c[i].connect[0],c[i].connect[1]);
+    file_pointer2 = fopen(otherfilename, "w");
+    for (i = 0; i < M; i++)
+    {
+        fprintf(file_pointer2, "%d %d\n", c[i].connect[0], c[i].connect[1]);
     }
-    file_pointer3 = fopen(otherfilename2, "w"); 
-    for(i = 0; i < number_of_highway;i++){
-	    fprintf(file_pointer3, "%s %s\n",edges[tmp_highway[i]].node[0], edges[tmp_highway[i]].node[1]);
+    file_pointer3 = fopen(otherfilename2, "w");
+    for (i = 0; i < number_of_highway; i++)
+    {
+        fprintf(file_pointer3, "%s %s\n", edges[tmp_highway[i]].node[0], edges[tmp_highway[i]].node[1]);
     }
-	    // for(int j = 0; j < number_of_highway; j++){
-        //     printf("tmp Highway[%d](%s , %s)\n", j, edges[tmp_highway[j]].node[0], edges[tmp_highway[j]].node[1]);
-        // } 
-	// Close the file
-	fclose(file_pointer); 
-    fclose(file_pointer2); 
-    fclose(file_pointer3); 
+    // for(int j = 0; j < number_of_highway; j++){
+    //     printf("tmp Highway[%d](%s , %s)\n", j, edges[tmp_highway[j]].node[0], edges[tmp_highway[j]].node[1]);
+    // }
+    // Close the file
+    fclose(file_pointer);
+    fclose(file_pointer2);
+    fclose(file_pointer3);
 }
