@@ -179,7 +179,7 @@ int main()
     i = 0;
     while (i < N)
     {
-        X = 0;
+        X = (rand() * rand()) % MAX_COO;
         Y = (rand() * rand()) % MAX_COO;
 
         if (searchVal(hashtable, X, Y) == FALSE)
@@ -288,8 +288,8 @@ int main()
     freeHashTable(hashtable2);
 
     printf("done\n");
-    // printf("Checking number of intersection\n");
-    // deter(c, p, M);
+    printf("Checking number of intersection\n");
+    deter(c, p, M);
     printf("Number of intersection is %d\n", intersectionnumber);
     if (P != 0)
     {
